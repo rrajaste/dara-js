@@ -1,0 +1,20 @@
+{
+  "name": "dara-js",
+  "version": "0.0.1",
+  "description": "Simple single page webapp game based on the two player board game Dara",
+  "main": "index.js",
+  "scripts": {
+	"build": "webpack --mode production",
+	"start": "webpack-dev-server --mode development --progress --color",
+    	"test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ranno Rajaste",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  }
+}
