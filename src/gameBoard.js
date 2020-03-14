@@ -19,11 +19,10 @@ class GameBoard {
         for (let i = 0; i < #nrOfRows; i++) {
             let row = [];
             for (let j = 0; j < #nrOfColumns; j++) {
-                row.push(PlayerTypes.NO_PLAYER)
+                row.push(new BoardCell(PlayerTypes.NO_PLAYER))
             }
             board.push(row);
         }
-
         #board = board;
     }
 
