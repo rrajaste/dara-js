@@ -34,4 +34,12 @@ class GameBoard {
     setCellOwner(row, column, owner){
         #board[row][column] = owner;
     }
+
+    get numberOfRows(){
+        return #nrOfRows;
+    }
+
+    get numberOfColumns(){
+        return #nrOfColumns;
+    }
 }
