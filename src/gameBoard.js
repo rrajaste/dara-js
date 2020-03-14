@@ -14,7 +14,6 @@ class GameBoard {
     }
 
     #generateBoard(){
-
         let board = [];
         for (let i = 0; i < #nrOfRows; i++) {
             let row = [];
@@ -26,12 +25,24 @@ class GameBoard {
         #board = board;
     }
 
-    getCellOwner(row, column){
-        return #board[row][column];
+    #getCell(row, col){
+        return #board[row][col]
     }
 
-    setCellOwner(row, column, owner){
-        #board[row][column] = owner;
+    getCellOwner(row, column){
+        return this.#getCell.owner;
+    }
+
+    setCellOwner(col, row, owner){
+        this.#getCell(col, row).owner = owner;
+    }
+
+    freezeCell(row, col){
+        this.#getCell.isFrozen = true;
+    };
+
+    isCellFrozen(row, col) {
+        return this.#getCell(row, col).isFrozen;
     }
 
     get numberOfRows(){

@@ -44,11 +44,11 @@ class GameEngine {
 
         if (#board.getCellOwner(row, column) !== PlayerTypes.NO_PLAYER) {
             throw new IllegalCellClaimException(
-                "Cannot claim an already claimed cell."
+                "Cannot drop a token on already claimed cell."
             )
         }
-
         #board.setCellOwner(row, column, claimer);
+
         #decrementActivePlayerUnusedTokenCount();
     }
 
@@ -67,7 +67,9 @@ class GameEngine {
     }
 
     #isThreeInARow(row, column){
+        for (let i = 0; i < #board.numberOfRows; i++) {
 
+        }
     }
 
 }
