@@ -4,13 +4,14 @@
   "description": "Simple single page webapp game based on the two player board game Dara",
   "main": "index.js",
   "scripts": {
-	"build": "webpack --mode production",
-	"start": "webpack-dev-server --mode development --progress --color",
-    	"test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --mode development --progress --color",
+    "test": "jasmine"
   },
-  "author": "Ranno Rajaste",
+"author": "Ranno Rajaste",
   "license": "ISC",
   "devDependencies": {
+    "jasmine": "^3.5.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
     "webpack": "^4.42.0",
