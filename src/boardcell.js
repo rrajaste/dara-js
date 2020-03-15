@@ -1,7 +1,4 @@
-class BoardCell{
-
-    owner;
-    isFrozen;
+export default class BoardCell{
 
     constructor(owner) {
         this.isFrozen = false;

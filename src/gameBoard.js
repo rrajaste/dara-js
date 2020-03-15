@@ -1,55 +1,44 @@
-"use strict";
+import BoardCell from './boardcell';
 
-class GameBoard {
+export default class GameBoard {
 
-    #nrOfRows = 5;
-    #nrOfColumns = 6;
-    #board;
+    constructor(nrOfRows = 5, nrOfColumns = 6) {
+        this.numberOfRows = nrOfRows;
+        this.numberOfColumns = nrOfColumns;
 
-    constructor(nrOfRows, nrOfColumns) {
-        #nrOfRows = nrOfRows;
-        #nrOfColumns = nrOfColumns;
-
-        #generateBoard();
+        this._generateBoard();
     }
 
-    #generateBoard(){
-        let board = [];
-        for (let i = 0; i < #nrOfRows; i++) {
+    _generateBoard(){
+
+        let generatedBoard = [];
+        for (let i = 0; i < this.numberOfRows; i++) {
             let row = [];
-            for (let j = 0; j < #nrOfColumns; j++) {
+            for (let j = 0; j < this.numberOfColumns; j++) {
                 row.push(new BoardCell(PlayerTypes.NO_PLAYER))
             }
-            board.push(row);
+            generatedBoard.push(row);
         }
-        #board = board;
+        this.board = generatedBoard;
     }
 
-    #getCell(row, col){
-        return #board[row][col]
+    getCell(row, col){
+        return this.board[row][col]
     }
 
     getCellOwner(row, column){
-        return this.#getCell.owner;
+        return this.getCell.owner;
     }
 
     setCellOwner(col, row, owner){
-        this.#getCell(col, row).owner = owner;
+        this.getCell(col, row).owner = owner;
     }
 
     freezeCell(row, col){
-        this.#getCell.isFrozen = true;
+        this.getCell(row, col).isFrozen = true;
     };
 
     isCellFrozen(row, col) {
-        return this.#getCell(row, col).isFrozen;
-    }
-
-    get numberOfRows(){
-        return #nrOfRows;
-    }
-
-    get numberOfColumns(){
-        return #nrOfColumns;
+        return this.getCell(row, col).isFrozen;
     }
 }

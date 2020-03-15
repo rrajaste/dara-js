@@ -1,62 +1,50 @@
-"use strict";
+import GameBoard from "./gameBoard";
 
-class GameEngine {
-
-    #numberOfRows = 5;
-    #numberOfColumns = 6;
-    #board;
-    #whoseTurn;
-    #gamePhase;
-    #firstPlayerTokens;
-    #secondPlayerTokens;
+export default class GameEngine {
 
     constructor() {
-        #board = new GameBoard(#numberOfRows, #numberOfColumns);
-        #gamePhase = GamePhases.NOT_STARTED;
-        #firstPlayerTokens = 12;
-        #secondPlayerTokens = 12;
-        #whoseTurn = PlayerTypes.FIRST_PLAYER;
+        this.board = new GameBoard();
+        this.gamePhase = GamePhases.NOT_STARTED;
+        this.firstPlayerTokens = 12;
+        this.secondPlayerTokens = 12;
+        this.whoseTurn = PlayerTypes.FIRST_PLAYER;
     }
 
     startDropPhase(){
-        if (#gamePhase !== GamePhases.NOT_STARTED) {
+        if (this.gamePhase !== GamePhases.NOT_STARTED) {
             throw new IllegalGamePhaseException(
-                `Drop phase can only be started once per game and as the first phase. Current phase: ${#gamePhase}`
+                `Drop phase can only be started once per game and as the first phase. Current phase: ${this.gamePhase}`
             );
         }
-        #gamePhase = GamePhases.MOVE_PHASE;
+        this.gamePhase = GamePhases.MOVE_PHASE;
     }
 
     startMovePhase(){
-        if (#gamePhase !== GamePhases.DROP_PHASE) {
+        if (this.gamePhase !== GamePhases.DROP_PHASE) {
             throw new IllegalGamePhaseException(
-                `Move phase can only be started after drop phase. Current phase: ${#gamePhase}`
+                `Move phase can only be started after drop phase. Current phase: ${this.gamePhase}`
             );
         }
-        #gamePhase = GamePhases.MOVE_PHASE;
+        this.gamePhase = GamePhases.MOVE_PHASE;
     }
 
     dropToken(row, column, claimer){
 
-        if (#gamePhase !== GamePhases.DROP_PHASE) {
-            throw new IllegalGamePhaseException(`Cannot drop tokens in game phase: ${#gamePhase}`);
+        if (this.gamePhase !== GamePhases.DROP_PHASE) {
+            throw new IllegalGamePhaseException(`Cannot drop tokens in game phase: ${this.gamePhase}`);
         }
 
-        if (#board.getCellOwner(row, column) !== PlayerTypes.NO_PLAYER) {
+        if (this.board.getCellOwner(row, column) !== PlayerTypes.NO_PLAYER) {
             throw new IllegalCellClaimException(
                 "Cannot drop a token on already claimed cell."
             )
         }
-        #board.setCellOwner(row, column, claimer);
+        this.board.setCellOwner(row, column, claimer);
 
-        #decrementActivePlayerUnusedTokenCount();
+        this.decrementActivePlayerUnusedTokenCount();
     }
 
-    get gamePhase(){
-        return #gamePhase;
-    }
-
-    #decrementActivePlayerUnusedTokenCount(){
+    _decrementActivePlayerUnusedTokenCount(){
         if (#whoseTurn === PlayerTypes.FIRST_PLAYER) {
             #firstPlayerTokens--;
         } else if (#whoseTurn === PlayerTypes.SECOND_PLAYER) {
@@ -66,8 +54,8 @@ class GameEngine {
         }
     }
 
-    #isThreeInARow(row, column){
-        for (let i = 0; i < #board.numberOfRows; i++) {
+    isThreeInARow(row, column){
+        for (let i = 0; i < this.board.numberOfRows; i++) {
 
         }
     }
