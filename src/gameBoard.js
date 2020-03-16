@@ -1,5 +1,4 @@
 import BoardCell from './boardcell.js';
-import coordinate from "./coordinate";
 
 
 export default class GameBoard {
@@ -39,7 +38,7 @@ export default class GameBoard {
         this.getCell(coordinates).owner = owner;
     }
 
-    removeCellOwner(coordinates){
+    removeCellOwner(coordinate){
         this.getCell(coordinate).owner = undefined;
     }
 
@@ -47,11 +46,11 @@ export default class GameBoard {
         return this.getCellOwner(coordinates) === undefined;
     }
 
-    freezeCell(coordinates){
+    freezeCell(coordinate){
         this.getCell(coordinate).isFrozen = true;
     };
 
-    isCellFrozen(coordinates) {
+    isCellFrozen(coordinate) {
         return this.getCell(coordinate).isFrozen;
     }
 }
