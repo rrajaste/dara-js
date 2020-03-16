@@ -12,3 +12,15 @@
 .icon-block .material-icons {
 	font-size: inherit;
 }
+
+#gameBoard {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+@media only screen and (max-width: 1920px) {
+.board-container {
+
+    max-width: 40%;
+    }
+}

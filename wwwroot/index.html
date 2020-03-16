@@ -12,38 +12,58 @@
 </head>
 <body>
   <nav class="light-blue lighten-1" role="navigation">
-
     <ul id="nav-mobile" class="hide-on-med-and-down">
       <li><a href="#" class="brand-logo center">dara-js</a></li>
     </ul>
-
   </nav>
+
   <div class="section no-pad-bot" id="index-banner">
+  </div>
+
+  <!-- Game info header -->
+
+  <div class="container board-container">
+    <div class="card center">
+      <div class="card-content">
+        <p class="first-player-name">First player: <span id="first-player-token-counter"></span></p>
+        <p class="second-player-name">Second player: <span id="second-player-token-counter"></span></p>
+        <p>Game phase: <span id="game-phase"></span></p>
+        <p>Whose turn: <span id="whose-turn"></span></p>
+      </div>
+      <div class="card-action">
+        <a href="#">NEW GAME</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div>
+    <p class="center" id="js-error-box"></p>
   </div>
 
   <!-- Game board -->
 
-  <div class="container brown center" id="gameBoard">
+  <div class="container brown center board-container" id="gameBoard">
 
       <!-- First row   -->
     <div class="row js-board-row">
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="1" data-col="1" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="0" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="1" data-col="2" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="1" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="1" data-col="3" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="2" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="1" data-col="4" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="3" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="1" data-col="5" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="4" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="1" data-col="6" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="5" data-player="0"></a>
       </div>
     </div>
 
@@ -52,45 +72,94 @@
 
     <div class="row js-board-row">
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="2" data-col="1" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="0" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="2" data-col="2" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="1" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="2" data-col="3" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="2" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="2" data-col="4" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="3" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="2" data-col="5" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="4" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="2" data-col="6" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="5" data-player="0"></a>
       </div>
     </div>
 
+    <!--  Third row   -->
+
     <div class="row js-board-row">
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="3" data-col="1" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="0" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="3" data-col="2" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="1" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="3" data-col="3" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="2" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="3" data-col="4" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="3" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="3" data-col="5" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="4" data-player="0"></a>
       </div>
       <div class="col s2">
-        <a class="btn-floating btn-large waves-effect waves-light red js-cell" data-row="3" data-col="6" data-player="0"></a>
+        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="5" data-player="0"></a>
       </div>
     </div>
+
+    <!--  Fourth row   -->
+
+    <div class="row js-board-row">
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="0" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="1" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="2" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="3" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="4" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="5" data-player="0"></a>
+      </div>
+    </div>
+
+    <!--  Fifth row   -->
+
+    <div class="row js-board-row">
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="0" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="1" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="2" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="3" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="4" data-player="0"></a>
+      </div>
+      <div class="col s2">
+        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="5" data-player="0"></a>
+      </div>
+    </div>
+
 
   </div>
 
