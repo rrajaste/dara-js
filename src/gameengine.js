@@ -1,65 +1,110 @@
-import GameBoard from "./gameBoard";
+import GameBoard from "./gameBoard.js";
+import {GAME_PHASES} from "./gamephases.js";
+import {PLAYER_TYPES} from "./playertypes.js";
+import BoardScanner from "./boardscanner.js";
+import Player from "./player.js";
+
 
 export default class GameEngine {
 
     constructor() {
         this.board = new GameBoard();
-        this.gamePhase = GamePhases.NOT_STARTED;
-        this.firstPlayerTokens = 12;
-        this.secondPlayerTokens = 12;
-        this.whoseTurn = PlayerTypes.FIRST_PLAYER;
+        this.gamePhase = GAME_PHASES.NOT_STARTED;
+        this.firstPlayer = new Player(PLAYER_TYPES.FIRST_PLAYER);
+        this.secondPlayer = new Player(PLAYER_TYPES.SECOND_PLAYER);
+        this.whoseTurn = this.firstPlayer;
+        this.boardScanner = new BoardScanner(this.board);
     }
 
-    startDropPhase(){
-        if (this.gamePhase !== GamePhases.NOT_STARTED) {
+    startGame(){
+        if (this.gamePhase !== GAME_PHASES.NOT_STARTED) {
+            throw new IllegalGamePhaseException("Cannot start a game, game is already in progress")
+        }
+        this._startDropPhase();
+    }
+
+    _startDropPhase(){
+        if (this.gamePhase !== GAME_PHASES.NOT_STARTED) {
             throw new IllegalGamePhaseException(
                 `Drop phase can only be started once per game and as the first phase. Current phase: ${this.gamePhase}`
             );
         }
-        this.gamePhase = GamePhases.MOVE_PHASE;
+        this.gamePhase = GAME_PHASES.DROP_PHASE;
     }
 
-    startMovePhase(){
-        if (this.gamePhase !== GamePhases.DROP_PHASE) {
+    _startMovePhase(){
+        if (this.gamePhase !== GAME_PHASES.DROP_PHASE) {
             throw new IllegalGamePhaseException(
                 `Move phase can only be started after drop phase. Current phase: ${this.gamePhase}`
             );
         }
-        this.gamePhase = GamePhases.MOVE_PHASE;
+        this.gamePhase = GAME_PHASES.MOVE_PHASE;
     }
 
-    dropToken(row, column, claimer){
+    _areAllTokensSpent(){
+        return this.firstPlayer.tokenCount === 0 && this.secondPlayer.tokenCount === 0;
+    }
 
-        if (this.gamePhase !== GamePhases.DROP_PHASE) {
-            throw new IllegalGamePhaseException(`Cannot drop tokens in game phase: ${this.gamePhase}`);
+    claimCell(coordinates){
+
+        if (this.gamePhase !== GAME_PHASES.DROP_PHASE) {
+            throw new IllegalGamePhaseException(`Cannot claim cells in game phase: ${this.gamePhase}`);
         }
-
-        if (this.board.getCellOwner(row, column) !== PlayerTypes.NO_PLAYER) {
+        if (!this.board.isCellUnclaimed(coordinates)){
+            throw new IllegalCellClaimException(`Cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
+        }
+        if (!this.boardScanner.isClaimingCellLegal(coordinates)) {
             throw new IllegalCellClaimException(
-                "Cannot drop a token on already claimed cell."
+                "Cannot claim cell, illegal move"
             )
         }
-        this.board.setCellOwner(row, column, claimer);
+        if (this.whoseTurn.tokenCount < 1){
+            throw new IllegalCellClaimException(
+                `Cannot claim cell, ${this.whoseTurn} does not have any tokens left`
+            )
+        }
+        this.board.setCellOwner(coordinates, this.whoseTurn);
+        this.whoseTurn.tokenCount--;
+        this.changeWhoseTurnItIs();
 
-        this.decrementActivePlayerUnusedTokenCount();
+        if (this._areAllTokensSpent()){
+            this._startMovePhase();
+        }
     }
 
-    _decrementActivePlayerUnusedTokenCount(){
-        if (#whoseTurn === PlayerTypes.FIRST_PLAYER) {
-            #firstPlayerTokens--;
-        } else if (#whoseTurn === PlayerTypes.SECOND_PLAYER) {
-            #secondPlayerTokens--;
+    moveToken(coordinates, direction){
+        if (this.gamePhase !== GAME_PHASES.MOVE_PHASE){
+            throw new IllegalGamePhaseException(`Cannot move tokens in game phase: ${this.gamePhase}`);
+        }
+
+        if (this.board.getCellOwner(coordinates) !== this.whoseTurn) {
+            throw new IllegalTokenMoveException(`This token doesn't belong to you!`)
+        }
+
+        if (! this.boardScanner.isMovingTokenLegal(coordinates, direction)){
+            throw new IllegalTokenMoveException('Cannot move token in given direction');
+        }
+        this.board.removeCellOwner(coordinates);
+        this.board.setCellOwner(coordinates.addDirection(direction), this.whoseTurn);
+        if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
+            this.gamePhase = GAME_PHASES.GAME_OVER;
+        }
+    };
+
+
+    changeWhoseTurnItIs() {
+        if (this.whoseTurn === this.firstPlayer){
+            this.whoseTurn = this.secondPlayer;
+        } else if (this.whoseTurn === this.secondPlayer){
+            this.whoseTurn = this.firstPlayer;
         } else {
-            throw new UnknownPlayerException(`Unknown player type: '${#whoseTurn}'`);
+            throw new UnknownPlayerException(`Cannot change turn, unknown player: ${this.whoseTurn}`)
         }
     }
 
-    isThreeInARow(row, column){
-        for (let i = 0; i < this.board.numberOfRows; i++) {
-
-        }
+    get winner(){
+        return this.whoseTurn;
     }
-
 }
 
 function IllegalGamePhaseException(message) {
@@ -70,10 +115,15 @@ function IllegalCellClaimException(message) {
     return new Error(message);
 }
 
+function IllegalTokenMoveException(message) {
+    return new Error(message);
+}
+
 function UnknownPlayerException(message) {
     return new Error(message);
 }
 
+IllegalTokenMoveException.prototype = Object.create(Error.prototype);
 IllegalGamePhaseException.prototype = Object.create(Error.prototype);
 IllegalCellClaimException.prototype = Object.create(Error.prototype);
 UnknownPlayerException.prototype = Object.create(Error.prototype);
