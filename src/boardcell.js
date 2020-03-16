@@ -1,7 +1,7 @@
 export default class BoardCell{
 
-    constructor(owner) {
+    constructor() {
         this.isFrozen = false;
-        this.owner = owner;
+        this.owner = undefined;
     }
 }
