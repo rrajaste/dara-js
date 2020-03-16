@@ -1,5 +1,6 @@
-GamePhases = {
-    NOT_STARTED: 0,
-    DROP_PHASE: 1,
-    MOVE_PHASE: 2
+export const GAME_PHASES = {
+    NOT_STARTED: "Not started",
+    DROP_PHASE: "Drop phase",
+    MOVE_PHASE: "Move phase",
+    GAME_OVER: "Game over"
 };
