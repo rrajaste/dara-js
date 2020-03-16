@@ -1,4 +1,6 @@
-import BoardCell from './boardcell';
+import BoardCell from './boardcell.js';
+import coordinate from "./coordinate";
+
 
 export default class GameBoard {
 
@@ -6,39 +8,50 @@ export default class GameBoard {
         this.numberOfRows = nrOfRows;
         this.numberOfColumns = nrOfColumns;
 
-        this._generateBoard();
+        this._generateEmptyBoard();
     }
 
-    _generateBoard(){
+    _generateEmptyBoard(){
 
         let generatedBoard = [];
         for (let i = 0; i < this.numberOfRows; i++) {
             let row = [];
             for (let j = 0; j < this.numberOfColumns; j++) {
-                row.push(new BoardCell(PlayerTypes.NO_PLAYER))
+                row.push(new BoardCell())
             }
             generatedBoard.push(row);
         }
         this.board = generatedBoard;
     }
 
-    getCell(row, col){
+    getCell(coordinate){
+        let col = coordinate.x;
+        let row = coordinate.y;
+
         return this.board[row][col]
     }
 
-    getCellOwner(row, column){
-        return this.getCell.owner;
+    getCellOwner(coordinates){
+        return this.getCell(coordinates).owner;
     }
 
-    setCellOwner(col, row, owner){
-        this.getCell(col, row).owner = owner;
+    setCellOwner(coordinates, owner){
+        this.getCell(coordinates).owner = owner;
     }
 
-    freezeCell(row, col){
-        this.getCell(row, col).isFrozen = true;
+    removeCellOwner(coordinates){
+        this.getCell(coordinate).owner = undefined;
+    }
+
+    isCellUnclaimed(coordinates){
+        return this.getCellOwner(coordinates) === undefined;
+    }
+
+    freezeCell(coordinates){
+        this.getCell(coordinate).isFrozen = true;
     };
 
-    isCellFrozen(row, col) {
-        return this.getCell(row, col).isFrozen;
+    isCellFrozen(coordinates) {
+        return this.getCell(coordinate).isFrozen;
     }
 }
