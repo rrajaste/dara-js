@@ -1,11 +1,12 @@
-export default class {
+export default class Coordinate {
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 
     addDirection(direction){
-        this.x = direction.columnIncrement;
-        this.y = direction.rowIncrement;
+        let newX = this.x + direction.columnIncrement;
+        let newY = this.y + direction.rowIncrement;
+        return new Coordinate(newX, newY);
     }
 }
