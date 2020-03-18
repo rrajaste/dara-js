@@ -1,4 +1,4 @@
-import {DIRECTIONS} from "./directions.js";
+import {SEMANTIC_DIRECTION} from "./semanticdirection.js";
 
 export default class {
     constructor(rowIncrement, columnIncrement) {
@@ -23,21 +23,21 @@ export default class {
 
     getSemanticDirection(){
         if (this.x === 0 && this.y === -1) {
-            return DIRECTIONS.NORTH;
+            return SEMANTIC_DIRECTION.NORTH;
         } else if (this.x === 0 && this.y === 1){
-            return DIRECTIONS.SOUTH;
+            return SEMANTIC_DIRECTION.SOUTH;
         } else if (this.x === 1 && this.y === 0){
-            return DIRECTIONS.EAST;
+            return SEMANTIC_DIRECTION.EAST;
         } else if (this.x === -1 && this.y === 0){
-            return DIRECTIONS.WEST;
+            return SEMANTIC_DIRECTION.WEST;
         } else if (this.x === 1 && this.y === -1){
-            return DIRECTIONS.NORTH_EAST;
+            return SEMANTIC_DIRECTION.NORTH_EAST;
         } else if (this.x === -1 && this.y === -1){
-            return DIRECTIONS.NORTH_WEST
+            return SEMANTIC_DIRECTION.NORTH_WEST
         } else if (this.x === 1 && this.y === 1){
-            return DIRECTIONS.SOUTH_EAST
+            return SEMANTIC_DIRECTION.SOUTH_EAST
         } else if (this.x === -1 && this.y === 1){
-            return DIRECTIONS.SOUTH_WEST
+            return SEMANTIC_DIRECTION.SOUTH_WEST
         }
     }
 
