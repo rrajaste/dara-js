@@ -55,7 +55,7 @@ export default class GameEngine {
             throw new IllegalCellClaimException(
                 `Cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
         }
-        if (!this.boardScanner.isClaimingCellLegal(coordinates)) {
+        if (!this.boardScanner.isClaimingCellLegal(coordinates, this.whoseTurn)) {
             throw new IllegalCellClaimException(
                 "Cannot claim cell, illegal move"
             )
@@ -105,13 +105,11 @@ export default class GameEngine {
                 'Cannot move token in given direction');
         }
 
+
         this.board.removeCellOwner(coordinates);
         this.board.setCellOwner(destination, this.whoseTurn);
 
         this.changeWhoseTurnItIs();
-
-
-        ////
 
         if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
             this.gamePhase = GAME_PHASES.GAME_OVER;
