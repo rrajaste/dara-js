@@ -1,12 +1,12 @@
-export default class a {
+export default class {
     constructor(rowIncrement, columnIncrement) {
         this.rowIncrement = this._normalizeIncrement(rowIncrement);
         this.columnIncrement = this._normalizeIncrement(columnIncrement);
     }
 
     static getDirection(startingCoordinate, destinationCoordinate){
-        let rowIncrement = destinationCoordinate.x - startingCoordinate.y;
-        let columnIncrement = destinationCoordinate.y - startingCoordinate.y;
+        let rowIncrement = destinationCoordinate.y - startingCoordinate.y;
+        let columnIncrement = destinationCoordinate.x - startingCoordinate.x;
         return new this(rowIncrement, columnIncrement);
     }
     _normalizeIncrement(increment){
