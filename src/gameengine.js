@@ -48,10 +48,12 @@ export default class GameEngine {
     claimCell(coordinates){
 
         if (this.gamePhase !== GAME_PHASES.DROP_PHASE) {
-            throw new IllegalGamePhaseException(`Cannot claim cells in game phase: ${this.gamePhase}`);
+            throw new IllegalGamePhaseException(
+                `Cannot claim cells in game phase: ${this.gamePhase}`);
         }
         if (!this.board.isCellUnclaimed(coordinates)){
-            throw new IllegalCellClaimException(`Cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
+            throw new IllegalCellClaimException(
+                `Cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
         }
         if (!this.boardScanner.isClaimingCellLegal(coordinates)) {
             throw new IllegalCellClaimException(
@@ -65,6 +67,7 @@ export default class GameEngine {
         }
         this.board.setCellOwner(coordinates, this.whoseTurn);
         this.whoseTurn.tokenCount--;
+
         this.changeWhoseTurnItIs();
 
         if (this._areAllTokensSpent()){
@@ -72,20 +75,44 @@ export default class GameEngine {
         }
     }
 
+    isTokenMovable(coordinates){
+        return (
+            this.board.getCellOwner(coordinates) === this.whoseTurn
+            && !this.board.isCellFrozen(coordinates)
+        )
+    }
+
     moveToken(coordinates, direction){
+
+        let destination = coordinates.addDirection(direction);
+
         if (this.gamePhase !== GAME_PHASES.MOVE_PHASE){
-            throw new IllegalGamePhaseException(`Cannot move tokens in game phase: ${this.gamePhase}`);
+            throw new IllegalGamePhaseException(
+                `Cannot move tokens in game phase: ${this.gamePhase}`);
+        }
+
+        if (this.board.getCellOwner(destination) !== undefined){
+            throw new IllegalTokenMoveException;
         }
 
         if (this.board.getCellOwner(coordinates) !== this.whoseTurn) {
-            throw new IllegalTokenMoveException(`This token doesn't belong to you!`)
+            throw new IllegalTokenMoveException(
+                `This token doesn't belong to you!`)
         }
 
         if (! this.boardScanner.isMovingTokenLegal(coordinates, direction)){
-            throw new IllegalTokenMoveException('Cannot move token in given direction');
+            throw new IllegalTokenMoveException(
+                'Cannot move token in given direction');
         }
+
         this.board.removeCellOwner(coordinates);
-        this.board.setCellOwner(coordinates.addDirection(direction), this.whoseTurn);
+        this.board.setCellOwner(destination, this.whoseTurn);
+
+        this.changeWhoseTurnItIs();
+
+
+        ////
+
         if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
             this.gamePhase = GAME_PHASES.GAME_OVER;
         }
