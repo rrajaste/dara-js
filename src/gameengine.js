@@ -16,6 +16,7 @@ export default class GameEngine {
         this.passivePlayer = this.secondPlayer;
         this.boardScanner = new BoardScanner(this.board);
         this.coordinatesOfThreeInRows = [];
+        this.lastMoveCausedThreeInARow = false;
     }
 
     startGame(){
@@ -44,7 +45,7 @@ export default class GameEngine {
     }
 
     _areAllTokensSpent(){
-        return this.firstPlayer.tokenCount === 0 && this.secondPlayer.tokenCount === 0;
+        return this.firstPlayer.unusedTokenCount === 0 && this.secondPlayer.unusedTokenCount === 0;
     }
 
     claimCell(coordinates){
@@ -62,13 +63,13 @@ export default class GameEngine {
                 "Cannot claim cell, illegal move"
             )
         }
-        if (this.activePlayer.tokenCount < 1){
+        if (this.activePlayer.unusedTokenCount < 1){
             throw new IllegalCellClaimException(
                 `Cannot claim cell, ${this.activePlayer} does not have any tokens left`
             )
         }
         this.board.setCellOwner(coordinates, this.activePlayer);
-        this.activePlayer.tokenCount--;
+        this.activePlayer.unusedTokenCount--;
 
         this.changeWhoseTurnItIs();
 
@@ -107,19 +108,46 @@ export default class GameEngine {
                 'Cannot move token in given direction');
         }
 
+        if (this.boardScanner.doesClaimingCellCauseNInARow(3, destination, this.activePlayer)){
+            this.lastMoveCausedThreeInARow = true;
+            this._updateCoordinatesOfThreeInRows();
+        }
 
         this.board.removeCellOwner(coordinates);
         this.board.setCellOwner(destination, this.activePlayer);
 
-        if (this.boardScanner.doesClaimingCellCauseNInARow(3, coordinates, this.activePlayer)){
-            this.coordinatesOfThreeInRows = this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer);
-        }
-
+        console.log(this.lastMoveCausedThreeInARow);
         this.changeWhoseTurnItIs();
 
         // if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
         //     this.gamePhase = GAME_PHASES.GAME_OVER;
         // }
+    };
+
+    resetThreeInARowFlag(){
+        this.lastMoveCausedThreeInARow = false;
+    }
+
+    removeToken(coordinates){
+
+        let cellOwner = this.board.getCellOwner(coordinates);
+
+        if (cellOwner === this.activePlayer || cellOwner === undefined){
+            throw new IllegalCellRemoveException("Cannot remove this token");
+        }
+        if (this.coordinatesOfThreeInRows.includes(coordinates)){
+            throw new IllegalCellRemoveException("Cannot remove this token, it's part of a three-in-a-row")
+        }
+
+        this.board.removeCellOwner(coordinates);
+        this.passivePlayer.totalTokenCount--;
+
+        this._updateCoordinatesOfThreeInRows();
+    }
+
+    _updateCoordinatesOfThreeInRows(){
+        this.coordinatesOfThreeInRows = this
+            .boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer);
     };
 
     changeWhoseTurnItIs() {
