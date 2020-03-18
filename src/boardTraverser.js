@@ -23,9 +23,7 @@ export default class BoardTraverser {
 
         let currentCoordinate = startingCoordinate;
         while (this._isCoordinateWithinBorders(currentCoordinate)) {
-
-            let boardCell = this.board.getCell(currentCoordinate);
-            output(boardCell);
+            output(currentCoordinate);
             currentCoordinate = currentCoordinate.addDirection(moveDirection);
         }
     }

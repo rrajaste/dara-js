@@ -1,4 +1,6 @@
 import BoardTraverser from "./boardTraverser.js";
+import Coordinate from "./coordinate";
+import gameboard from "./gameboard";
 
 export default class BoardScanner{
 
@@ -31,10 +33,6 @@ export default class BoardScanner{
         return !this.doesClaimingCellCauseNInARow(3, coordinate, claimer);
     }
 
-    isNoMovesLeftFor(player) {
-        return false;
-    }
-
     doesClaimingCellCauseNInARow(n, cellCoordinate, claimer) {
 
         if (this.gameBoard.getCellOwner(cellCoordinate) !== undefined) {
@@ -43,8 +41,9 @@ export default class BoardScanner{
         this.gameBoard.setCellOwner(cellCoordinate, claimer);
         let maxMatchesInRow = 0;
         let matchesInRow = 0;
-        let output = function(boardCell){
-            if (boardCell.owner === claimer){
+        let board = this.gameBoard;
+        let output = function(returnedCoordinates){
+            if (board.getCellOwner(returnedCoordinates) === claimer){
                 matchesInRow++;
                 if (matchesInRow > maxMatchesInRow){
                     maxMatchesInRow = matchesInRow;
@@ -60,28 +59,29 @@ export default class BoardScanner{
         return (maxMatchesInRow >= n);
     }
 
-    getAllCellsThatArePartOfThreeInARow(player){
-        let collectedCells = [];
-        let matchingCellsInRow = [];
-        let output = function (cell) {
-            if (cell.owner === player){
-                matchingCellsInRow.push(cell);
-                if (matchingCellsInRow.length === 3){
-                    collectedCells.concat(matchingCellsInRow);
-                } else if (matchingCellsInRow.length > 3) {
+    getAllCellCoordinatesThatArePartOfThreeInARow(player){
+        let collectedCoordinates = [];
+        let matchingCellsInRowCoordinates = [];
+        let board = this.gameBoard;
+        let output = function (returnedCoordinates) {
+            if (board.getCellOwner(returnedCoordinates) === player){
+                matchingCellsInRowCoordinates.push(returnedCoordinates);
+                if (matchingCellsInRowCoordinates.length === 3){
+                    collectedCoordinates.concat(matchingCellsInRowCoordinates);
+                } else if (matchingCellsInRowCoordinates.length > 3) {
                     throw new Error(); // TODO: dedicated exception
                 }
             } else {
-                matchingCellsInRow = [];
+                matchingCellsInRowCoordinates = [];
             }
         };
         for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
-            this.traverser.traverseRow(i);
+            this.traverser.traverseRow(i, output);
         }
         for (let i = 0; i < this.gameBoard.numberOfColumns; i++) {
-            this.traverser.traverseColumn(i);
+            this.traverser.traverseColumn(i, output);
         }
-        return collectedCells;
+        return collectedCoordinates;
     }
 }
 
