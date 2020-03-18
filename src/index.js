@@ -1,53 +1,99 @@
-import {GAME_PHASES} from "./gamephases.js";
-import {PLAYER_TYPES} from "./playertypes.js";
-
 "js-cell";
 
+import {GAME_PHASES} from "./gamephases.js";
+import Direction from "./direction.js";
 import GameEngine from "./gameengine.js";
 import Coordinate from "./coordinate.js";
 
 let engine = new GameEngine();
-engine.startGame();
-
-console.log(engine);
-
-displayStats();
-setErrorBoxText("\n");
-
 let displayBoard = document.getElementById('gameBoard');
 let displayBoardRows = displayBoard.querySelectorAll('.js-board-row');
+let firstPlayerColor = "green";
+let secondPlayerColor = "red";
+let emptyCellColor = "brown";
+let cellToMove = undefined;
+let focusedCell = undefined;
 
-let playerColorMap = {
-    "First Player": "blue",
-    "Second Player": "green",
-    "Empty": "brown"
-};
 
+engine.startGame();
+displayStats();
+setErrorBoxText("\n");
+console.log(engine);
 
-let cellToMove;
+for (const row of displayBoardRows) {
+    let cells = row.querySelectorAll('.js-cell');
+    for (const cell of cells)  {
+        cell.onclick = cellClicked;
+    }
+}
 
 function cellClicked(event) {
+
     setErrorBoxText("\n");
 
-    let row = this.dataset.row;
-    let col = this.dataset.col;
+    let row = Number (this.dataset.row);
+    let col = Number (this.dataset.col);
     let coordinate = new Coordinate(col, row);
 
     if (engine.gamePhase === GAME_PHASES.DROP_PHASE)
-    try {
-        engine.claimCell(coordinate);
-        setCellColor(this, playerColorMap[engine.whoseTurn.PLAYER_TYPE]);
-    } catch (e) {
-        setErrorBoxText(e.message);
-    } else if (engine.gamePhase === GAME_PHASES.MOVE_PHASE) {
-        if (cellToMove === undefined) {
-            cellToMove = this;
+        try {
+            engine.claimCell(coordinate);
+        } catch (e) {
+            setErrorBoxText(e.message);
+
+        } else if (engine.gamePhase === GAME_PHASES.MOVE_PHASE) {
+        if (cellToMove === undefined && engine.isTokenMovable(coordinate)) {
+            cellToMove = coordinate;
+            focusedCell = this;
+            focusToken(this);
         } else {
-            engine.moveToken()
+            let direction = Direction.getDirection(cellToMove, coordinate);
+            try{
+                engine.moveToken(cellToMove, direction);
+            } catch (e) {
+                setErrorBoxText(e)
+            } finally {
+                cellToMove = undefined;
+                unFocusToken(focusedCell);
+                console.log(this);
+            }
         }
     }
+    updateBoard();
     displayStats();
     console.log(engine);
+}
+
+function focusToken(element){
+    element.classList.add("focused-token")
+}
+
+function unFocusToken(element){
+    element.classList.remove("focused-token");
+}
+
+function updateBoard(){
+
+    for (const row of displayBoardRows) {
+        let cellsInRow = row.querySelectorAll('.js-cell');
+        for (const cell of cellsInRow)  {
+            let row = Number (cell.dataset.row);
+            let col = Number (cell.dataset.col);
+            let coordinate = new Coordinate(col, row);
+
+            let color;
+
+            if (engine.board.getCellOwner(coordinate) === engine.firstPlayer){
+                color = firstPlayerColor;
+            } else if (engine.board.getCellOwner(coordinate) === engine.secondPlayer){
+                color = secondPlayerColor;
+            } else {
+                color = emptyCellColor;
+            }
+            cell.classList.add("red");
+            setCellColor(cell, color)
+        }
+    }
 }
 
 function setCellColor(element, color) {
@@ -56,13 +102,21 @@ function setCellColor(element, color) {
 }
 
 function clearCellColor(element) {
-
-    for (const player in playerColorMap) {
-        let color = playerColorMap[player];
-        if (element.classList.contains(color)){
-            element.classList.remove(color);
-        }
+    if (element.classList.contains(firstPlayerColor)){
+        element.classList.remove(firstPlayerColor);
     }
+    if (element.classList.contains(secondPlayerColor)){
+        element.classList.remove(secondPlayerColor);
+    }
+    if (element.classList.contains(emptyCellColor)){
+        element.classList.remove(emptyCellColor);
+    }
+}
+
+function displayStats() {
+    displayTokenCount();
+    displayWhoseTurnItIs();
+    displayGamePhase()
 }
 
 function setErrorBoxText(text){
@@ -81,20 +135,3 @@ function displayGamePhase() {
 function displayWhoseTurnItIs() {
     document.getElementById("whose-turn").innerText = engine.whoseTurn.toString();
 }
-
-function displayStats() {
-    displayTokenCount();
-    displayWhoseTurnItIs();
-    displayGamePhase()
-}
-
-for (const row of displayBoardRows) {
-    let cells = row.querySelectorAll('.js-cell');
-    for (const cell of cells)  {
-        cell.onclick = cellClicked;
-    }
-}
-
-
-
-
