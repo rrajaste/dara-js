@@ -12,8 +12,10 @@ export default class GameEngine {
         this.gamePhase = GAME_PHASES.NOT_STARTED;
         this.firstPlayer = new Player(PLAYER_TYPES.FIRST_PLAYER);
         this.secondPlayer = new Player(PLAYER_TYPES.SECOND_PLAYER);
-        this.whoseTurn = this.firstPlayer;
+        this.activePlayer = this.firstPlayer;
+        this.passivePlayer = this.secondPlayer;
         this.boardScanner = new BoardScanner(this.board);
+        this.coordinatesOfThreeInRows = [];
     }
 
     startGame(){
@@ -55,18 +57,18 @@ export default class GameEngine {
             throw new IllegalCellClaimException(
                 `Cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
         }
-        if (!this.boardScanner.isClaimingCellLegal(coordinates, this.whoseTurn)) {
+        if (!this.boardScanner.isClaimingCellLegal(coordinates, this.activePlayer)) {
             throw new IllegalCellClaimException(
                 "Cannot claim cell, illegal move"
             )
         }
-        if (this.whoseTurn.tokenCount < 1){
+        if (this.activePlayer.tokenCount < 1){
             throw new IllegalCellClaimException(
-                `Cannot claim cell, ${this.whoseTurn} does not have any tokens left`
+                `Cannot claim cell, ${this.activePlayer} does not have any tokens left`
             )
         }
-        this.board.setCellOwner(coordinates, this.whoseTurn);
-        this.whoseTurn.tokenCount--;
+        this.board.setCellOwner(coordinates, this.activePlayer);
+        this.activePlayer.tokenCount--;
 
         this.changeWhoseTurnItIs();
 
@@ -77,7 +79,7 @@ export default class GameEngine {
 
     isTokenMovable(coordinates){
         return (
-            this.board.getCellOwner(coordinates) === this.whoseTurn
+            this.board.getCellOwner(coordinates) === this.activePlayer
             && !this.board.isCellFrozen(coordinates)
         )
     }
@@ -95,7 +97,7 @@ export default class GameEngine {
             throw new IllegalTokenMoveException;
         }
 
-        if (this.board.getCellOwner(coordinates) !== this.whoseTurn) {
+        if (this.board.getCellOwner(coordinates) !== this.activePlayer) {
             throw new IllegalTokenMoveException(
                 `This token doesn't belong to you!`)
         }
@@ -107,28 +109,27 @@ export default class GameEngine {
 
 
         this.board.removeCellOwner(coordinates);
-        this.board.setCellOwner(destination, this.whoseTurn);
+        this.board.setCellOwner(destination, this.activePlayer);
+
+        if (this.boardScanner.doesClaimingCellCauseNInARow(3, coordinates, this.activePlayer)){
+            this.coordinatesOfThreeInRows = this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer);
+        }
 
         this.changeWhoseTurnItIs();
 
-        if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
-            this.gamePhase = GAME_PHASES.GAME_OVER;
-        }
+        // if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
+        //     this.gamePhase = GAME_PHASES.GAME_OVER;
+        // }
     };
 
-
     changeWhoseTurnItIs() {
-        if (this.whoseTurn === this.firstPlayer){
-            this.whoseTurn = this.secondPlayer;
-        } else if (this.whoseTurn === this.secondPlayer){
-            this.whoseTurn = this.firstPlayer;
-        } else {
-            throw new UnknownPlayerException(`Cannot change turn, unknown player: ${this.whoseTurn}`)
-        }
+        let tmp = this.activePlayer;
+        this.activePlayer = this.passivePlayer;
+        this.passivePlayer = tmp;
     }
 
     get winner(){
-        return this.whoseTurn;
+        return this.activePlayer;
     }
 }
 
@@ -148,7 +149,12 @@ function UnknownPlayerException(message) {
     return new Error(message);
 }
 
+function IllegalCellRemoveException(message) {
+    return new Error(message);
+}
+
 IllegalTokenMoveException.prototype = Object.create(Error.prototype);
 IllegalGamePhaseException.prototype = Object.create(Error.prototype);
 IllegalCellClaimException.prototype = Object.create(Error.prototype);
+IllegalCellRemoveException.prototype = Object.create(Error.prototype);
 UnknownPlayerException.prototype = Object.create(Error.prototype);
