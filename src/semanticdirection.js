@@ -6,5 +6,5 @@ export const SEMANTIC_DIRECTION = {
     NORTH_EAST: "north-east",
     NORTH_WEST: "north-west",
     SOUTH_EAST: "south-east",
-    SOUTH_WEST: "south-west",
-}
+    SOUTH_WEST: "south-west"
+};
