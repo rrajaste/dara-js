@@ -1,15 +1,15 @@
 import {SEMANTIC_DIRECTION} from "./semanticdirection.js";
 
 export default class {
-    constructor(rowIncrement, columnIncrement) {
-        this.rowIncrement = this._normalizeIncrement(rowIncrement);
-        this.columnIncrement = this._normalizeIncrement(columnIncrement);
+    constructor(x, y) {
+        this.x = this._normalizeIncrement(x);
+        this.y = this._normalizeIncrement(y);
     }
 
     static getDirection(startingCoordinate, destinationCoordinate){
-        let rowIncrement = destinationCoordinate.y - startingCoordinate.y;
-        let columnIncrement = destinationCoordinate.x - startingCoordinate.x;
-        return new this(rowIncrement, columnIncrement);
+        let x = destinationCoordinate.x - startingCoordinate.x;
+        let y = destinationCoordinate.y - startingCoordinate.y;
+        return new this(x, y);
     }
 
     _normalizeIncrement(increment){
@@ -43,6 +43,7 @@ export default class {
 
     isOrthogonal(){
         let semanticDirection = this.getSemanticDirection();
+        console.log("dir", this.getSemanticDirection());
         return semanticDirection === SEMANTIC_DIRECTION.NORTH
             || semanticDirection === SEMANTIC_DIRECTION.SOUTH
             || semanticDirection === SEMANTIC_DIRECTION.EAST

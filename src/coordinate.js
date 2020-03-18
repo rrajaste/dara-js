@@ -5,8 +5,8 @@ export default class Coordinate {
     }
 
     addDirection(direction){
-        let newX = this.x + direction.columnIncrement;
-        let newY = this.y + direction.rowIncrement;
+        let newX = this.x + direction.x;
+        let newY = this.y + direction.y;
         return new Coordinate(newX, newY);
     }
 }
