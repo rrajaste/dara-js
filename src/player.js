@@ -1,11 +1,11 @@
 export default class {
     constructor(PLAYER_TYPE) {
-        this.tokenCount = 12;
+        this.tokenCount = 3;
         this.PLAYER_TYPE = PLAYER_TYPE;
-        this.screenName;
+        this.Name;
     }
 
     toString(){
-        return this.PLAYER_TYPE.toString();
+        return this.Name;
     }
 }
