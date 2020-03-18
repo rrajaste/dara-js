@@ -41,6 +41,14 @@ export default class {
         }
     }
 
+    isOrthogonal(){
+        let semanticDirection = this.getSemanticDirection();
+        return semanticDirection === SEMANTIC_DIRECTION.NORTH
+            || semanticDirection === SEMANTIC_DIRECTION.SOUTH
+            || semanticDirection === SEMANTIC_DIRECTION.EAST
+            || semanticDirection === SEMANTIC_DIRECTION.WEST;
+    }
+
     toString(){
         return this.getSemanticDirection();
     }
