@@ -4,6 +4,7 @@ export default class BoardScanner{
 
     constructor(gameBoard){
         this.gameBoard = gameBoard;
+        this.traverser = new BoardTraverser(this.gameBoard);
     }
 
     isMovingTokenLegal(coordinate, direction){
@@ -40,7 +41,6 @@ export default class BoardScanner{
             throw new Error(); //TODO: dedicated exception
         }
         this.gameBoard.setCellOwner(cellCoordinate, claimer);
-        let traverser = new BoardTraverser(this.gameBoard);
         let maxMatchesInRow = 0;
         let matchesInRow = 0;
         let output = function(boardCell){
@@ -53,11 +53,35 @@ export default class BoardScanner{
                 matchesInRow = 0;
             }
         };
-        traverser.traverseRow(cellCoordinate, output);
+        this.traverser.traverseRow(cellCoordinate, output);
         matchesInRow = 0;
-        traverser.traverseColumn(cellCoordinate, output);
+        this.traverser.traverseColumn(cellCoordinate, output);
         this.gameBoard.removeCellOwner(cellCoordinate);
         return (maxMatchesInRow >= n);
     }
 
+    getAllCellsThatArePartOfThreeInARow(player){
+        let collectedCells = [];
+        let matchingCellsInRow = [];
+        let output = function (cell) {
+            if (cell.owner === player){
+                matchingCellsInRow.push(cell);
+                if (matchingCellsInRow.length === 3){
+                    collectedCells.concat(matchingCellsInRow);
+                } else if (matchingCellsInRow.length > 3) {
+                    throw new Error(); // TODO: dedicated exception
+                }
+            } else {
+                matchingCellsInRow = [];
+            }
+        };
+        for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
+            this.traverser.traverseRow(i);
+        }
+        for (let i = 0; i < this.gameBoard.numberOfColumns; i++) {
+            this.traverser.traverseColumn(i);
+        }
+        return collectedCells;
+    }
 }
+

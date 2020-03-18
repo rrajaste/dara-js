@@ -1,7 +1,7 @@
 import BoardCell from './boardcell.js';
 
 
-export default class GameBoard {
+export default class Gameboard {
 
     constructor(nrOfRows = 5, nrOfColumns = 6) {
         this.numberOfRows = nrOfRows;

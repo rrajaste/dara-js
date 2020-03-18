@@ -1,4 +1,4 @@
-import GameBoard from "./gameBoard.js";
+import Gameboard from "./gameboard.js";
 import {GAME_PHASES} from "./gamephases.js";
 import {PLAYER_TYPES} from "./playertypes.js";
 import BoardScanner from "./boardscanner.js";
@@ -8,7 +8,7 @@ import Player from "./player.js";
 export default class GameEngine {
 
     constructor() {
-        this.board = new GameBoard();
+        this.board = new Gameboard();
         this.gamePhase = GAME_PHASES.NOT_STARTED;
         this.firstPlayer = new Player(PLAYER_TYPES.FIRST_PLAYER);
         this.secondPlayer = new Player(PLAYER_TYPES.SECOND_PLAYER);
