@@ -24,3 +24,7 @@
     max-width: 40%;
     }
 }
+
+.focused-token{
+    border-style: dashed;
+}
