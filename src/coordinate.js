@@ -9,4 +9,7 @@ export default class Coordinate {
         let newY = this.y + direction.y;
         return new Coordinate(newX, newY);
     }
+    equals(coordinate){
+        return this.x === coordinate.x && this.y === coordinate.y;
+    };
 }
