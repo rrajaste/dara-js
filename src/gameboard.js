@@ -1,7 +1,8 @@
 import BoardCell from './boardcell.js';
+import coordinate from "./coordinate";
 
 
-export default class Gameboard {
+export default class GameBoard {
 
     constructor(nrOfRows = 5, nrOfColumns = 6) {
         this.numberOfRows = nrOfRows;
@@ -52,5 +53,8 @@ export default class Gameboard {
 
     isCellFrozen(coordinate) {
         return this.getCell(coordinate).isFrozen;
+    }
+    isCellEmpty(coordinate){
+        return this.getCellOwner(coordinate) === undefined;
     }
 }
