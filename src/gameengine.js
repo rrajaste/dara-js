@@ -110,14 +110,14 @@ export default class GameEngine {
                 'Cannot move token in given direction');
         }
 
-        this.board.removeCellOwner(coordinates);
-        if (this.boardScanner.doesClaimingCellCauseNInARow(3, destination, this.activePlayer)){
+        if (this.boardScanner.doesMovingTokenCauseNInARow(3, coordinates, destination)){
             this.lastMoveCausedThreeInARow = true;
-            this._updateCoordinatesOfThreeInRows();
         }
+
+        this.board.removeCellOwner(coordinates);
         this.board.setCellOwner(destination, this.activePlayer);
 
-        console.log(this.lastMoveCausedThreeInARow);
+        this._updateCoordinatesOfThreeInRows();
         this.changeWhoseTurnItIs();
 
         // if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
@@ -149,8 +149,9 @@ export default class GameEngine {
     }
 
     _updateCoordinatesOfThreeInRows(){
-        this.coordinatesOfThreeInRows = this
-            .boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer);
+        this.coordinatesOfThreeInRows = this.boardScanner
+            .getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer)
+            .concat(this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.passivePlayer));
     };
 
     changeWhoseTurnItIs() {
