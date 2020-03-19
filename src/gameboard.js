@@ -43,10 +43,6 @@ export default class GameBoard {
         this.getCell(coordinate).owner = undefined;
     }
 
-    isCellUnclaimed(coordinates){
-        return this.getCellOwner(coordinates) === undefined;
-    }
-
     freezeCell(coordinate){
         this.getCell(coordinate).isFrozen = true;
     };
