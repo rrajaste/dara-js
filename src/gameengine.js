@@ -86,13 +86,6 @@ export default class GameEngine {
         }
     }
 
-    isTokenMovable(coordinates){
-        return (
-            this.board.getCellOwner(coordinates) === this.activePlayer
-            && !this.board.isCellFrozen(coordinates)
-        )
-    }
-
     moveToken(coordinates, direction){
 
         this.resetThreeInARowFlag();
