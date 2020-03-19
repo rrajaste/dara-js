@@ -48,6 +48,10 @@ export default class GameEngine {
         return this.firstPlayer.unusedTokenCount === 0 && this.secondPlayer.unusedTokenCount === 0;
     }
 
+    isTokenOwnedByActivePlayer(coordinate){
+        return this.board.getCellOwner(coordinate) === this.activePlayer;
+    }
+
     claimCell(coordinates){
 
         if (this.gamePhase !== GAME_PHASES.DROP_PHASE) {
@@ -56,7 +60,7 @@ export default class GameEngine {
         }
         if (this.board.getCellOwner(coordinates) === this.passivePlayer){
             throw new IllegalCellClaimException(
-                `This cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
+                `This cell is already claimed by player ${this.board.getCellOwner(coordinates).name}`)
         }
         if (this.board.getCellOwner(coordinates) === this.activePlayer){
             throw new IllegalCellClaimException(
@@ -123,15 +127,17 @@ export default class GameEngine {
                 'Cannot move token in given direction');
         }
 
-        if (this.boardScanner.doesMovingTokenCauseNInARow(3, coordinates, destination)){
+        if (this.boardScanner.doesMovingTokenCauseNInARow(3, coordinates, destination)) {
             this.lastMoveCausedThreeInARow = true;
         }
 
         this.board.removeCellOwner(coordinates);
         this.board.setCellOwner(destination, this.activePlayer);
-
         this._updateCoordinatesOfThreeInRows();
-        this.changeWhoseTurnItIs();
+
+        if (this.lastMoveCausedThreeInARow === false){
+            this.changeWhoseTurnItIs();
+        }
 
         // if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
         //     this.gamePhase = GAME_PHASES.GAME_OVER;
@@ -159,6 +165,8 @@ export default class GameEngine {
         this.passivePlayer.totalTokenCount--;
 
         this._updateCoordinatesOfThreeInRows();
+        this._checkForVictory();
+        this.changeWhoseTurnItIs();
     }
 
     _updateCoordinatesOfThreeInRows(){
@@ -166,6 +174,13 @@ export default class GameEngine {
             .getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer)
             .concat(this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.passivePlayer));
     };
+
+    _checkForVictory() {
+        if (this.passivePlayer.totalTokenCount <= 2){
+            this.gamePhase = GAME_PHASES.GAME_OVER;
+        }
+    }
+
 
     changeWhoseTurnItIs() {
         let tmp = this.activePlayer;
