@@ -1,4 +1,4 @@
-import Gameboard from "./gameboard.js";
+import GameBoard from "./gameboard.js";
 import {GAME_PHASES} from "./gamephases.js";
 import {PLAYER_TYPES} from "./playertypes.js";
 import BoardScanner from "./boardscanner.js";
@@ -8,7 +8,7 @@ import Player from "./player.js";
 export default class GameEngine {
 
     constructor() {
-        this.board = new Gameboard();
+        this.board = new GameBoard();
         this.gamePhase = GAME_PHASES.NOT_STARTED;
         this.firstPlayer = new Player(PLAYER_TYPES.FIRST_PLAYER);
         this.secondPlayer = new Player(PLAYER_TYPES.SECOND_PLAYER);
@@ -54,9 +54,13 @@ export default class GameEngine {
             throw new IllegalGamePhaseException(
                 `Cannot claim cells in game phase: ${this.gamePhase}`);
         }
-        if (!this.board.isCellUnclaimed(coordinates)){
+        if (this.board.getCellOwner(coordinates) === this.passivePlayer){
             throw new IllegalCellClaimException(
-                `Cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
+                `This cell is already claimed by player ${this.board.getCellOwner(coordinates)}`)
+        }
+        if (this.board.getCellOwner(coordinates) === this.activePlayer){
+            throw new IllegalCellClaimException(
+                `This cell is already claimed by you`)
         }
         if (!this.boardScanner.isClaimingCellLegal(coordinates, this.activePlayer)) {
             throw new IllegalCellClaimException(
@@ -96,13 +100,22 @@ export default class GameEngine {
                 `Cannot move tokens in game phase: ${this.gamePhase}`);
         }
 
-        if (this.board.getCellOwner(destination) !== undefined){
-            throw new IllegalTokenMoveException;
+        if (! this.board.isCellEmpty(destination)){
+            throw new IllegalTokenMoveException("Can only move token to an empty cell");
         }
 
         if (this.board.getCellOwner(coordinates) !== this.activePlayer) {
             throw new IllegalTokenMoveException(
                 `This token doesn't belong to you!`)
+        }
+
+        if (destination.equals(coordinates)){
+            throw new IllegalTokenMoveException("Choose a destination")
+        }
+
+        if (this.board.isCellEmpty(coordinates)) {
+            throw new IllegalTokenMoveException(
+                `This cell is empty`)
         }
 
         if (! this.boardScanner.isMovingTokenLegal(coordinates, direction)){
