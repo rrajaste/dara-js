@@ -7,20 +7,19 @@ export default class BoardTraverser {
         this.board = board;
     }
 
-    traverseRow(coordinate, output){
-        let startingCoordinate = new Coordinate(0, coordinate.y);
+    traverseRow(rowIndex, output){
+        let startingCoordinate = new Coordinate(0, rowIndex);
         let moveDirection = new Direction(1, 0);
         this.traverse(startingCoordinate, moveDirection, output);
     }
 
-    traverseColumn(coordinate, output){
-        let startingCoordinate = new Coordinate(coordinate.x, 0);
+    traverseColumn(columnIndex, output){
+        let startingCoordinate = new Coordinate(columnIndex, 0);
         let moveDirection = new Direction(0, 1);
         this.traverse(startingCoordinate, moveDirection, output);
     }
 
     traverse(startingCoordinate, moveDirection, output){
-
         let currentCoordinate = startingCoordinate;
         while (this._isCoordinateWithinBorders(currentCoordinate)) {
             output(currentCoordinate);
