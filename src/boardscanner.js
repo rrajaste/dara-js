@@ -1,6 +1,5 @@
 import BoardTraverser from "./boardTraverser.js";
 import Coordinate from "./coordinate";
-import gameboard from "./gameboard";
 
 export default class BoardScanner{
 
@@ -20,9 +19,10 @@ export default class BoardScanner{
         if (this.gameBoard.isCellFrozen(coordinate)){
             return false;
         }
-        if (this.gameBoard.getCellOwner(destinationCoordinate) !== undefined){
+        if (!this.gameBoard.isCellEmpty(destinationCoordinate)){
             return false;
         }
+
         this.gameBoard.removeCellOwner(coordinate);
         let isLegal = !this.doesClaimingCellCauseNInARow(4, destinationCoordinate, claimer);
         this.gameBoard.setCellOwner(coordinate, claimer);
@@ -30,15 +30,20 @@ export default class BoardScanner{
     }
 
     isClaimingCellLegal(coordinate, claimer){
+        if (!this.gameBoard.isCellEmpty(coordinate)){
+            return false;
+        }
         return !this.doesClaimingCellCauseNInARow(3, coordinate, claimer);
     }
 
     doesClaimingCellCauseNInARow(n, cellCoordinate, claimer) {
 
-        if (this.gameBoard.getCellOwner(cellCoordinate) !== undefined) {
+        if (! this.gameBoard.isCellEmpty(cellCoordinate)) {
             throw new Error(); //TODO: dedicated exception
         }
+
         this.gameBoard.setCellOwner(cellCoordinate, claimer);
+
         let maxMatchesInRow = 0;
         let matchesInRow = 0;
         let board = this.gameBoard;
@@ -52,11 +57,19 @@ export default class BoardScanner{
                 matchesInRow = 0;
             }
         };
-        this.traverser.traverseRow(cellCoordinate, output);
+        this.traverser.traverseRow(cellCoordinate.y, output);
         matchesInRow = 0;
-        this.traverser.traverseColumn(cellCoordinate, output);
+        this.traverser.traverseColumn(cellCoordinate.x, output);
         this.gameBoard.removeCellOwner(cellCoordinate);
         return (maxMatchesInRow >= n);
+    }
+
+    doesMovingTokenCauseNInARow(n, currentCoordinates, destinationCoordinates){
+        let owner = this.gameBoard.getCellOwner(currentCoordinates);
+        this.gameBoard.removeCellOwner(currentCoordinates);
+        let causesThreeInARow = this.doesClaimingCellCauseNInARow(n, destinationCoordinates, owner);
+        this.gameBoard.setCellOwner(currentCoordinates, owner);
+        return causesThreeInARow;
     }
 
     getAllCellCoordinatesThatArePartOfThreeInARow(player){
@@ -67,7 +80,7 @@ export default class BoardScanner{
             if (board.getCellOwner(returnedCoordinates) === player){
                 matchingCellsInRowCoordinates.push(returnedCoordinates);
                 if (matchingCellsInRowCoordinates.length === 3){
-                    collectedCoordinates.concat(matchingCellsInRowCoordinates);
+                    collectedCoordinates = collectedCoordinates.concat(matchingCellsInRowCoordinates);
                 } else if (matchingCellsInRowCoordinates.length > 3) {
                     throw new Error(); // TODO: dedicated exception
                 }
