@@ -1,3 +1,5 @@
+import gameengine from "./gameengine";
+
 "js-cell";
 
 import {GAME_PHASES} from "./gamephases.js";
@@ -11,14 +13,27 @@ let displayBoardRows = displayBoard.querySelectorAll('.js-board-row');
 let firstPlayerColor = "green";
 let secondPlayerColor = "red";
 let emptyCellColor = "brown";
-let cellToMove = undefined;
-let focusedCell = undefined;
+let cellToMove;
+let focusedCell;
+let selectedCoordinate;
+let movePhaseAction;
 
 
+engine.firstPlayer.name = "First player";
+engine.secondPlayer.name = "Second player";
 engine.startGame();
 displayStats();
 setErrorBoxText("\n");
+
 console.log(engine);
+
+const ACTIONS = {
+    SELECT_CELL: 1,
+    REMOVE_CELL: 2,
+    MOVE_CELL: 3
+};
+
+movePhaseAction = ACTIONS.SELECT_CELL;
 
 for (const row of displayBoardRows) {
     let cells = row.querySelectorAll('.js-cell');
@@ -28,44 +43,77 @@ for (const row of displayBoardRows) {
 }
 
 function cellClicked(event) {
-
     setErrorBoxText("\n");
-
-    let row = Number (this.dataset.row);
-    let col = Number (this.dataset.col);
-    let coordinate = new Coordinate(col, row);
-
-    if (engine.gamePhase === GAME_PHASES.DROP_PHASE)
-        try {
-            engine.claimCell(coordinate);
-        } catch (e) {
-            setErrorBoxText(e.message);
-
+    if (engine.gamePhase !== GAME_PHASES.GAME_OVER){
+        let row = Number (this.dataset.row);
+        let column = Number (this.dataset.col);
+        selectedCoordinate = new Coordinate(column, row);
+        if (engine.gamePhase === GAME_PHASES.DROP_PHASE){
+            handleDropPhaseCellClick();
         } else if (engine.gamePhase === GAME_PHASES.MOVE_PHASE) {
-        if (cellToMove === undefined && engine.isTokenMovable(coordinate)) {
-            cellToMove = coordinate;
-            focusedCell = this;
-            focusToken(this);
-        } else {
-            let direction = Direction.getDirection(cellToMove, coordinate);
-            try{
-                engine.moveToken(cellToMove, direction);
-            } catch (e) {
-                setErrorBoxText(e)
-            } finally {
-                cellToMove = undefined;
-                unFocusToken(focusedCell);
-                console.log(this);
-            }
+            handleMovePhaseCellClick(this);
         }
+        updateBoard();
+        displayStats();
     }
-    updateBoard();
-    displayStats();
     console.log(engine);
 }
 
+function handleDropPhaseCellClick(){
+    try {
+        engine.claimCell(selectedCoordinate);
+    } catch (e) {
+        setErrorBoxText(e.message);
+    }
+}
+
+function handleMovePhaseCellClick(element){
+    if (movePhaseAction === ACTIONS.SELECT_CELL) {
+        handleCellSelection(element);
+    } else if (movePhaseAction === ACTIONS.MOVE_CELL) {
+        handleCellMoving();
+    } else if (movePhaseAction === ACTIONS.REMOVE_CELL){
+        handleCellRemoval();
+    }
+}
+
+function handleCellSelection(element) {
+    if (engine.isTokenOwnedByActivePlayer(selectedCoordinate)){
+        cellToMove = selectedCoordinate;
+        focusToken(element);
+        movePhaseAction = ACTIONS.MOVE_CELL;
+    } else {
+        movePhaseAction = ACTIONS.SELECT_CELL;
+    }
+}
+
+function handleCellRemoval() {
+    try{
+        engine.removeToken(selectedCoordinate);
+        movePhaseAction = ACTIONS.SELECT_CELL;
+    } catch (e) {
+        setErrorBoxText(e);
+    }
+}
+
+function handleCellMoving(){
+    let direction = Direction.getDirection(cellToMove, selectedCoordinate);
+    try{
+        engine.moveToken(cellToMove, direction);
+    } catch (e) {
+        setErrorBoxText(e)
+    } finally {
+        movePhaseAction = ACTIONS.SELECT_CELL;
+        unFocusToken(focusedCell);
+    }
+    if (engine.lastMoveCausedThreeInARow){
+        movePhaseAction = ACTIONS.REMOVE_CELL;
+    }
+}
+
 function focusToken(element){
-    element.classList.add("focused-token")
+    element.classList.add("focused-token");
+    focusedCell = element;
 }
 
 function unFocusToken(element){
@@ -124,8 +172,8 @@ function setErrorBoxText(text){
 }
 
 function displayTokenCount() {
-    document.getElementById("first-player-token-counter").innerText = engine.firstPlayer.tokenCount;
-    document.getElementById("second-player-token-counter").innerText = engine.secondPlayer.tokenCount;
+    document.getElementById("first-player-token-counter").innerText = engine.firstPlayer.unusedTokenCount;
+    document.getElementById("second-player-token-counter").innerText = engine.secondPlayer.unusedTokenCount;
 }
 
 function displayGamePhase() {
@@ -133,5 +181,5 @@ function displayGamePhase() {
 }
 
 function displayWhoseTurnItIs() {
-    document.getElementById("whose-turn").innerText = engine.whoseTurn.toString();
+    document.getElementById("whose-turn").innerText = engine.activePlayer.name;
 }
