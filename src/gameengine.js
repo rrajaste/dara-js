@@ -87,6 +87,8 @@ export default class GameEngine {
 
     moveToken(coordinates, direction){
 
+        this.resetThreeInARowFlag();
+
         let destination = coordinates.addDirection(direction);
 
         if (this.gamePhase !== GAME_PHASES.MOVE_PHASE){
@@ -108,12 +110,11 @@ export default class GameEngine {
                 'Cannot move token in given direction');
         }
 
+        this.board.removeCellOwner(coordinates);
         if (this.boardScanner.doesClaimingCellCauseNInARow(3, destination, this.activePlayer)){
             this.lastMoveCausedThreeInARow = true;
             this._updateCoordinatesOfThreeInRows();
         }
-
-        this.board.removeCellOwner(coordinates);
         this.board.setCellOwner(destination, this.activePlayer);
 
         console.log(this.lastMoveCausedThreeInARow);
@@ -129,6 +130,8 @@ export default class GameEngine {
     }
 
     removeToken(coordinates){
+
+        this.resetThreeInARowFlag();
 
         let cellOwner = this.board.getCellOwner(coordinates);
 
