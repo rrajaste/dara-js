@@ -51,14 +51,13 @@ export default class Direction{
             || semanticDirection === SEMANTIC_DIRECTION.WEST;
     }
 
-    static getRandomOrthogonalDirection(){
-        const possibleOrthogonalDirections = [
+    static getAllOrthogonalDirections(){
+        return [
             new Direction(0, -1),
             new Direction(0, 1),
             new Direction(1, 0),
             new Direction(-1, 0),
         ];
-        return possibleOrthogonalDirections[Math.floor(Math.random() * possibleOrthogonalDirections.length)];
     }
 
     toString(){
