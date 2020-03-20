@@ -95,10 +95,12 @@ export default class BoardScanner{
         };
         for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
             this.traverser.traverseRow(i, output);
+            matchingCellsInRowCoordinates = [];
         }
-        matchingCellsInRowCoordinates = [];
+
         for (let i = 0; i < this.gameBoard.numberOfColumns; i++) {
             this.traverser.traverseColumn(i, output);
+            matchingCellsInRowCoordinates = [];
         }
         return collectedCoordinates;
     }
