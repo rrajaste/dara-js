@@ -53,4 +53,10 @@ export default class GameBoard {
     isCellEmpty(coordinate){
         return this.getCellOwner(coordinate) === undefined;
     }
+    isCoordinateOnBoard(coordinate){
+        return (coordinate.x >= 0
+            && coordinate.x < this.numberOfColumns
+            && coordinate.y >= 0
+            && coordinate.y < this.numberOfRows);
+    }
 }
