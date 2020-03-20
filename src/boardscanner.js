@@ -1,9 +1,8 @@
 import BoardTraverser from "./boardTraverser.js";
-import Coordinate from "./coordinate";
 
 export default class BoardScanner{
 
-    constructor(gameBoard){
+    constructor(gameBoard) {
         this.gameBoard = gameBoard;
         this.traverser = new BoardTraverser(this.gameBoard);
     }
@@ -22,11 +21,22 @@ export default class BoardScanner{
         if (!this.gameBoard.isCellEmpty(destinationCoordinate)){
             return false;
         }
+        if (this._isCoordinateOutOfBounds(coordinate.addDirection(direction))){
+            return false;
+        }
 
         this.gameBoard.removeCellOwner(coordinate);
         let isLegal = !this.doesClaimingCellCauseNInARow(4, destinationCoordinate, claimer);
         this.gameBoard.setCellOwner(coordinate, claimer);
         return isLegal;
+    }
+
+    _isCoordinateOutOfBounds(coordinate){
+        return coordinate.x < 0
+            || coordinate.y < 0
+            || coordinate.x > this.gameBoard.numberOfColumns
+            || coordinate.y > this.gameBoard.numberOfRows;
+
     }
 
     isClaimingCellLegal(coordinate, claimer){
