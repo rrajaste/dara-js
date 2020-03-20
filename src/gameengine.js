@@ -131,10 +131,6 @@ export default class GameEngine {
         if (this.lastMoveCausedThreeInARow === false){
             this.changeWhoseTurnItIs();
         }
-
-        // if (this.boardScanner.isNoMovesLeftFor(this.whoseTurn)) {
-        //     this.gamePhase = GAME_PHASES.GAME_OVER;
-        // }
     };
 
     resetThreeInARowFlag(){
@@ -150,7 +146,7 @@ export default class GameEngine {
         if (cellOwner === this.activePlayer || cellOwner === undefined){
             throw new IllegalCellRemoveException("Cannot remove this token");
         }
-        if (this.coordinatesOfThreeInRows.includes(coordinates)){
+        if (this.isCellPartOfThreeInARow(coordinates)){
             throw new IllegalCellRemoveException("Cannot remove this token, it's part of a three-in-a-row")
         }
 
@@ -166,6 +162,7 @@ export default class GameEngine {
         this.coordinatesOfThreeInRows = this.boardScanner
             .getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer)
             .concat(this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.passivePlayer));
+        console.log("ThreeInRows", this.coordinatesOfThreeInRows)
     };
 
     _checkForVictory() {
@@ -174,6 +171,15 @@ export default class GameEngine {
         }
     }
 
+    isCellPartOfThreeInARow(coordinateToFind){
+        for (let i = 0; i < this.coordinatesOfThreeInRows.length; i++) {
+            let cellCoordinate = this.coordinatesOfThreeInRows[i];
+            if (cellCoordinate.equals(coordinateToFind)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     changeWhoseTurnItIs() {
         let tmp = this.activePlayer;
