@@ -12,6 +12,10 @@ export default class BoardScanner{
         let destinationCoordinate = coordinate.addDirection(direction);
         let claimer = this.gameBoard.getCellOwner(coordinate);
 
+        if (!this.gameBoard.isCoordinateOnBoard(destinationCoordinate)){
+            return false;
+        }
+
         if (!direction.isOrthogonal()){
             return false;
         }
@@ -21,9 +25,6 @@ export default class BoardScanner{
         if (!this.gameBoard.isCellEmpty(destinationCoordinate)){
             return false;
         }
-        if (this._isCoordinateOutOfBounds(coordinate.addDirection(direction))){
-            return false;
-        }
 
         this.gameBoard.removeCellOwner(coordinate);
         let isLegal = !this.doesClaimingCellCauseNInARow(4, destinationCoordinate, claimer);
@@ -31,13 +32,6 @@ export default class BoardScanner{
         return isLegal;
     }
 
-    _isCoordinateOutOfBounds(coordinate){
-        return coordinate.x < 0
-            || coordinate.y < 0
-            || coordinate.x > this.gameBoard.numberOfColumns
-            || coordinate.y > this.gameBoard.numberOfRows;
-
-    }
 
     isClaimingCellLegal(coordinate, claimer){
         if (!this.gameBoard.isCellEmpty(coordinate)){
@@ -49,6 +43,7 @@ export default class BoardScanner{
     doesClaimingCellCauseNInARow(n, cellCoordinate, claimer) {
 
         if (! this.gameBoard.isCellEmpty(cellCoordinate)) {
+
             throw new Error(); //TODO: dedicated exception
         }
 
@@ -101,6 +96,7 @@ export default class BoardScanner{
         for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
             this.traverser.traverseRow(i, output);
         }
+        matchingCellsInRowCoordinates = [];
         for (let i = 0; i < this.gameBoard.numberOfColumns; i++) {
             this.traverser.traverseColumn(i, output);
         }
