@@ -12,4 +12,14 @@ export default class Coordinate {
     equals(coordinate){
         return this.x === coordinate.x && this.y === coordinate.y;
     };
+
+    isInArray(array){
+        for (let i = 0; i < array.length; i++) {
+            let arrayElement = array[i];
+            if (this.equals(arrayElement)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
