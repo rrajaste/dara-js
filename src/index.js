@@ -3,10 +3,12 @@ import {GAME_PHASES} from "./gamephases.js";
 import Direction from "./direction.js";
 import GameEngine from "./gameengine.js";
 import Coordinate from "./coordinate.js";
-import Ai from "./ai.js";
+import AI from "./ai.js";
+
+// TODO: add messages
+// TODO: add return to menu button
 
 let engine = new GameEngine();
-let AI = new Ai(); // TODO: fix declaration of AI
 let displayBoard = document.querySelector('#gameBoard');
 let displayBoardRows = displayBoard.querySelectorAll('.js-board-row');
 let newGameButton  = document.querySelector('#new-game-button');
@@ -20,9 +22,9 @@ let focusedCell;
 let selectedCoordinate;
 let movePhaseAction;
 let displayCells = [];
-let isFirstPlayerAI;
-let isSecondPlayerAI;
-
+let isBoardInteractable = true;
+let Ai;
+let aiThinkTime = 100;
 
 engine.firstPlayer.name = "First player";
 engine.secondPlayer.name = "Second player";
@@ -36,23 +38,21 @@ setErrorBoxText("\n");
 console.log(engine);
 
 const ACTIONS = {
-    SELECT_CELL: 1,
-    REMOVE_CELL: 2,
-    MOVE_CELL: 3
+    SELECT_CELL: "SELECT_CELL",
+    REMOVE_CELL: "REMOVE_CELL",
+    MOVE_CELL: "MOVE_CELL"
+};
+
+const GAME_MODES = {
+    PLAYER_VS_AI: 0,
+    PLAYER_VS_PLAYER: 1,
+    AI_VS_PLAYER: 2,
+    AI_VS_AI: 3
 };
 
 movePhaseAction = ACTIONS.SELECT_CELL;
 
-for (const row of displayBoardRows) {
-    let cells = row.querySelectorAll('.js-cell');
-    for (const cell of cells)  {
-        cell.onclick = cellClicked;
-        displayCells.push(cell);
-    }
-}
-
 function handleRulesToggle() {
-    console.log("HEER");
     if (areRulesVisible){
         hideRules();
     } else {
@@ -62,12 +62,17 @@ function handleRulesToggle() {
 
 function startNewGame(event) {
     setPlayerNames();
-    setAi();
+    setUpDisplayBoard();
     engine.startGame();
     hideSettingsPanel();
     hideRules();
     showGameBoard();
     showGameInfoPanel();
+    setAi();
+
+    if (engine.firstPlayer.isAi){
+        aiMakeMove();
+    }
 }
 
 function setPlayerNames() {
@@ -82,33 +87,63 @@ function setPlayerNames() {
 }
 
 function setAi(){
-    isFirstPlayerAI = document.querySelector('#first-player-switch').checked;
-    isSecondPlayerAI = document.querySelector('#second-player-switch').checked;
+    engine.firstPlayer.isAi = document.querySelector('#first-player-switch').checked;
+    engine.secondPlayer.isAi = document.querySelector('#second-player-switch').checked;
+    if (engine.firstPlayer.isAi || engine.secondPlayer.isAi){
+        Ai = new AI(engine.board);
+    }
 }
 
-function cellClicked() {
+function setUpDisplayBoard() {
+    for (const row of displayBoardRows) {
+        let cells = row.querySelectorAll('.js-cell');
+        for (const cell of cells)  {
+            cell.onclick = cellClicked;
+            displayCells.push(cell);
+        }
+    }
+}
+
+function cellClicked(event) {
+    if (!wasCellClickedByPlayer(event)){
+        handleCellClick(this);
+    } else if (wasCellClickedByPlayer(event) && isPlayersTurn()){
+        handleCellClick(this);
+    }
+}
+
+function isPlayersTurn() {
+    return !engine.activePlayer.isAi;
+}
+
+function handleCellClick(element) {
+    console.log(movePhaseAction);
     setErrorBoxText("\n");
-    if (engine.gamePhase !== GAME_PHASES.GAME_OVER && engine.gamePhase !== GAME_PHASES.NOT_STARTED){
-        let row = Number (this.dataset.row);
-        let column = Number (this.dataset.col);
+    if (isBoardInteractable){
+        let row = Number (element.dataset.row);
+        let column = Number (element.dataset.col);
         selectedCoordinate = new Coordinate(column, row);
         if (engine.gamePhase === GAME_PHASES.DROP_PHASE){
-            handleDropPhaseCellClick(this);
+            handleDropPhaseCellClick(element);
         } else if (engine.gamePhase === GAME_PHASES.MOVE_PHASE) {
-            handleMovePhaseCellClick(this);
+            handleMovePhaseCellClick(element);
         }
         updateBoard();
         displayStats();
+        if (engine.activePlayer.isAi){
+            aiMakeMove();
+        }
     }
     console.log(engine);
 }
 
 function handleDropPhaseCellClick(element){
-    try {
-        engine.claimCell(selectedCoordinate);
+    try{
+        engine.claimCell(selectedCoordinate);    
     } catch (e) {
-        showTokenAsUnselectable(element);
+        console.log(e);
         setErrorBoxText(e.message);
+        showTokenAsUnselectable(element);
     }
 }
 
@@ -134,31 +169,72 @@ function handleCellSelection(element) {
 }
 
 function handleCellRemoval(element) {
-    try{
-        engine.removeToken(selectedCoordinate);
-        movePhaseAction = ACTIONS.SELECT_CELL;
-    } catch (e) {
-        showTokenAsUnselectable(element);
-        setErrorBoxText(e);
-    }
+        try{
+            engine.removeToken(selectedCoordinate);
+            movePhaseAction = ACTIONS.SELECT_CELL;
+        } catch (e) {
+            showTokenAsUnselectable(element);
+        }
 }
 
 function handleCellMoving(element){
     let direction = Direction.getDirection(cellToMove, selectedCoordinate);
     try{
         engine.moveToken(cellToMove, direction);
-    } catch (e) {
-        showTokenAsUnselectable(element);
-        setErrorBoxText(e)
-    } finally {
         movePhaseAction = ACTIONS.SELECT_CELL;
+        if (engine.lastMoveCausedThreeInARow){
+            displayThreeInARow();
+            movePhaseAction = ACTIONS.REMOVE_CELL;
+        }
+    } catch (e) {
+        console.log(e);
+        showTokenAsUnselectable(element);
+        movePhaseAction = ACTIONS.SELECT_CELL;
+    } finally {
         unFocusToken(focusedCell);
     }
-    if (engine.lastMoveCausedThreeInARow){
-        displayThreeInARow();
-        movePhaseAction = ACTIONS.REMOVE_CELL;
+}
+
+function aiMakeMove() {
+    if (engine.gamePhase === GAME_PHASES.DROP_PHASE){
+        aiClickCell(Ai.getTokenDropCoordinatesFor(engine.activePlayer));
+    } else if (engine.gamePhase === GAME_PHASES.MOVE_PHASE){
+        let coords = Ai.getTokenToMoveCoordinatesFor(engine.activePlayer);
+        console.log("Token to move", coords);
+        let destination = Ai.getDestinationCellCoordinatesFor(engine.activePlayer);
+        console.log("Destination", destination);
+        aiClickCell(coords);
+        aiClickCell(destination);
+        console.log("this is what ai would have removed ", Ai.getCoordinatesToRemoveTokenFrom(engine.passivePlayer));
+        if (engine.lastMoveCausedThreeInARow){
+            aiClickCell(Ai.getCoordinatesToRemoveTokenFrom(engine.passivePlayer));
+        }
     }
 }
+
+function aiClickCell(coordinate) {
+
+    let displayCellToClick;
+    for (let i = 0; i < displayCells.length; i++) {
+        let displayCell = displayCells[i];
+        let row = Number (displayCell.dataset.row);
+        let col = Number (displayCell.dataset.col);
+        let displayCellCoordinate = new Coordinate(col, row);
+        if (coordinate.equals(displayCellCoordinate)){
+            displayCellToClick = displayCell;
+        }
+    }
+    let timerHandler = function(){
+        displayCellToClick.click();
+    };
+    setTimeout(timerHandler, aiThinkTime);
+
+}
+
+function wasCellClickedByPlayer(event) {
+    return event.isTrusted;
+}
+
 
 function displayThreeInARow(){
     for (let i = 0; i < displayCells.length; i++) {
@@ -166,7 +242,7 @@ function displayThreeInARow(){
         let row = Number (displayCell.dataset.row);
         let col = Number (displayCell.dataset.col);
         let coordinate = new Coordinate(col, row);
-        if (engine.isCellPartOfThreeInARow(coordinate)){
+        if (engine.isCellPartOfThreeInARow(coordinate) && engine.board.getCellOwner(coordinate) === engine.activePlayer){
             showTokenAsPartOfThreeInARow(displayCell);
         }
     }
