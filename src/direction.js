@@ -1,6 +1,7 @@
 import {SEMANTIC_DIRECTION} from "./semanticdirection.js";
+import Coordinate from "./coordinate";
 
-export default class {
+export default class Direction{
     constructor(x, y) {
         this.x = this._normalizeIncrement(x);
         this.y = this._normalizeIncrement(y);
@@ -48,6 +49,16 @@ export default class {
             || semanticDirection === SEMANTIC_DIRECTION.SOUTH
             || semanticDirection === SEMANTIC_DIRECTION.EAST
             || semanticDirection === SEMANTIC_DIRECTION.WEST;
+    }
+
+    static getRandomOrthogonalDirection(){
+        const possibleOrthogonalDirections = [
+            new Direction(0, -1),
+            new Direction(0, 1),
+            new Direction(1, 0),
+            new Direction(-1, 0),
+        ];
+        return possibleOrthogonalDirections[Math.floor(Math.random() * possibleOrthogonalDirections.length)];
     }
 
     toString(){
