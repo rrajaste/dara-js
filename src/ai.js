@@ -18,19 +18,21 @@ export default class AI{
         return this.initiatedMove.coordinates.addDirection(this.initiatedMove.direction);
     }
 
-    getTokenToRemoveCoordinatesFor(player){
-        return this._getCoordinatesForRandomTokenToRemoveFor(player);
+    getCoordinatesToRemoveTokenFrom(player){
+        return this._getCoordinatesForRandomTokenToRemoveFrom(player);
     }
 
-    _getCoordinatesForRandomTokenToRemoveFor(player){
-        this._getRandomElementFromArray(this._getCoordinatesForAllPossibleTokensToRemoveFor(player));
+    _getCoordinatesForRandomTokenToRemoveFrom(player){
+        let cells = this._getCoordinatesForAllPossibleTokensToRemoveFrom(player);
+        return this._getRandomElementFromArray(cells);
     }
 
-    _getCoordinatesForAllPossibleTokensToRemoveFor(player){
+    _getCoordinatesForAllPossibleTokensToRemoveFrom(player){
         let availableCoordinates = [];
         let cellsPartOfThreeInRows = this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(player);
+        let board = this.gameBoard;
         let validateCell = function (coordinate) {
-            if (!coordinate.isInArray(cellsPartOfThreeInRows)){
+            if (board.getCellOwner(coordinate) === player && !coordinate.isInArray(cellsPartOfThreeInRows)){
                 availableCoordinates.push(coordinate);
             }
         };
@@ -57,15 +59,21 @@ export default class AI{
         let allPreferredMoves = [];
         let directions = Direction.getAllOrthogonalDirections();
         let boardScanner = this.boardScanner;
+        let board = this.gameBoard;
         let validateCell = function (returnedCoordinate) {
-            for (let i = 0; i < directions.length; i++) {
-                let direction = directions[i];
-                if (boardScanner.isMovingTokenLegal(returnedCoordinate, direction)){
-                    let move = new tokenMove(returnedCoordinate, direction);
-                    if (boardScanner.doesMovingTokenCauseNInARow(3, returnedCoordinate, direction)){
-                        allPreferredMoves.push(move);
-                    } else {
-                        allLegalMoves.push(move);
+            if (board.getCellOwner(returnedCoordinate) === player){
+                for (let i = 0; i < directions.length; i++) {
+                    let direction = directions[i];
+                    if (board.isCoordinateOnBoard(returnedCoordinate.addDirection(direction))
+                        && board.isCellEmpty(returnedCoordinate.addDirection(direction))){
+                        if (boardScanner.isMovingTokenLegal(returnedCoordinate, direction)){
+                            let move = new tokenMove(returnedCoordinate, direction);
+                            if (boardScanner.doesMovingTokenCauseNInARow(3, returnedCoordinate, returnedCoordinate.addDirection(direction))){
+                                allPreferredMoves.push(move);
+                            } else {
+                                allLegalMoves.push(move);
+                            }
+                        }
                     }
                 }
             }
