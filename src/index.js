@@ -1,9 +1,10 @@
-
 import {GAME_PHASES} from "./gamephases.js";
 import Direction from "./direction.js";
 import GameEngine from "./gameengine.js";
 import Coordinate from "./coordinate.js";
 import AI from "./ai.js";
+import TokenMove from "./tokenMove.js";
+import ai from "./ai";
 
 // TODO: add messages
 // TODO: add return to menu button
@@ -24,7 +25,8 @@ let movePhaseAction;
 let displayCells = [];
 let isBoardInteractable = true;
 let Ai;
-let aiThinkTime = 100;
+let aiThinkTime = 1000;
+let aiClickCounter = 0;
 
 engine.firstPlayer.name = "First player";
 engine.secondPlayer.name = "Second player";
@@ -117,7 +119,6 @@ function isPlayersTurn() {
 }
 
 function handleCellClick(element) {
-    console.log(movePhaseAction);
     setErrorBoxText("\n");
     if (isBoardInteractable){
         let row = Number (element.dataset.row);
@@ -130,11 +131,12 @@ function handleCellClick(element) {
         }
         updateBoard();
         displayStats();
+        console.log("is player ai", engine.activePlayer.isAi);
+        console.log("active player", engine.activePlayer);
         if (engine.activePlayer.isAi){
             aiMakeMove();
         }
     }
-    console.log(engine);
 }
 
 function handleDropPhaseCellClick(element){
@@ -180,7 +182,8 @@ function handleCellRemoval(element) {
 function handleCellMoving(element){
     let direction = Direction.getDirection(cellToMove, selectedCoordinate);
     try{
-        engine.moveToken(cellToMove, direction);
+        let move = new TokenMove(cellToMove, direction);
+        engine.moveToken(move);
         movePhaseAction = ACTIONS.SELECT_CELL;
         if (engine.lastMoveCausedThreeInARow){
             displayThreeInARow();
@@ -196,39 +199,43 @@ function handleCellMoving(element){
 }
 
 function aiMakeMove() {
+    console.log("AI MOVED");
     if (engine.gamePhase === GAME_PHASES.DROP_PHASE){
         aiClickCell(Ai.getTokenDropCoordinatesFor(engine.activePlayer));
     } else if (engine.gamePhase === GAME_PHASES.MOVE_PHASE){
-        let coords = Ai.getTokenToMoveCoordinatesFor(engine.activePlayer);
-        console.log("Token to move", coords);
-        let destination = Ai.getDestinationCellCoordinatesFor(engine.activePlayer);
-        console.log("Destination", destination);
-        aiClickCell(coords);
-        aiClickCell(destination);
-        console.log("this is what ai would have removed ", Ai.getCoordinatesToRemoveTokenFrom(engine.passivePlayer));
-        if (engine.lastMoveCausedThreeInARow){
-            aiClickCell(Ai.getCoordinatesToRemoveTokenFrom(engine.passivePlayer));
+        let coords;
+        if (movePhaseAction === ACTIONS.SELECT_CELL){
+            coords = Ai.getTokenToMoveCoordinatesFor(engine.activePlayer)
+        } else if (movePhaseAction === ACTIONS.MOVE_CELL){
+            coords = Ai.getDestinationCellCoordinatesFor(engine.activePlayer);
+        } else if (movePhaseAction === ACTIONS.REMOVE_CELL) {
+            coords = Ai.getCoordinatesToRemoveTokenFrom(engine.passivePlayer)
         }
+        aiClickCell(coords);
     }
 }
 
 function aiClickCell(coordinate) {
+    let displayCellToClick = getDisplayCell(coordinate);
+    let timerHandler = function(){
+        aiClickCounter++;
+        displayCellToClick.click();
 
-    let displayCellToClick;
+    };
+    setTimeout(timerHandler, aiThinkTime);
+
+}
+
+function getDisplayCell(coordinates) {
     for (let i = 0; i < displayCells.length; i++) {
         let displayCell = displayCells[i];
         let row = Number (displayCell.dataset.row);
         let col = Number (displayCell.dataset.col);
         let displayCellCoordinate = new Coordinate(col, row);
-        if (coordinate.equals(displayCellCoordinate)){
-            displayCellToClick = displayCell;
+        if (coordinates.equals(displayCellCoordinate)){
+            return displayCell
         }
     }
-    let timerHandler = function(){
-        displayCellToClick.click();
-    };
-    setTimeout(timerHandler, aiThinkTime);
-
 }
 
 function wasCellClickedByPlayer(event) {
