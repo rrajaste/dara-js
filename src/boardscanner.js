@@ -17,7 +17,6 @@ export default class BoardScanner{
         if (!this.gameBoard.isCoordinateOnBoard(destinationCoordinate)){
             return false;
         }
-
         if (!direction.isOrthogonal()){
             return false;
         }
@@ -57,7 +56,7 @@ export default class BoardScanner{
         let output = function(returnedCoordinates){
             let horizontalDistance = coordinate.getHorizontalDistanceFrom(returnedCoordinates);
             let verticalDistance = coordinate.getVerticalDistanceFrom(returnedCoordinates);
-            if (board.getCellOwner(returnedCoordinates) === claimer && horizontalDistance < 3 && verticalDistance < 3){
+            if (board.getCellOwner(returnedCoordinates) === claimer && horizontalDistance < n && verticalDistance < n){
                 matchesInRow++;
                 if (matchesInRow > maxMatchesInRow){
                     maxMatchesInRow = matchesInRow;
