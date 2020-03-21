@@ -4,9 +4,7 @@ import GameEngine from "./gameengine.js";
 import Coordinate from "./coordinate.js";
 import AI from "./ai.js";
 import TokenMove from "./tokenMove.js";
-import ai from "./ai";
 
-// TODO: add messages
 // TODO: add return to menu button
 
 let engine = new GameEngine();
@@ -25,8 +23,7 @@ let movePhaseAction;
 let displayCells = [];
 let isBoardInteractable = true;
 let Ai;
-let aiThinkTime = 1000;
-let aiClickCounter = 0;
+let aiThinkTime = 500;
 
 engine.firstPlayer.name = "First player";
 engine.secondPlayer.name = "Second player";
@@ -45,13 +42,6 @@ const ACTIONS = {
     MOVE_CELL: "MOVE_CELL"
 };
 
-const GAME_MODES = {
-    PLAYER_VS_AI: 0,
-    PLAYER_VS_PLAYER: 1,
-    AI_VS_PLAYER: 2,
-    AI_VS_AI: 3
-};
-
 movePhaseAction = ACTIONS.SELECT_CELL;
 
 function handleRulesToggle() {
@@ -62,7 +52,7 @@ function handleRulesToggle() {
     }
 }
 
-function startNewGame(event) {
+function startNewGame() {
     setPlayerNames();
     setUpDisplayBoard();
     engine.startGame();
@@ -71,6 +61,7 @@ function startNewGame(event) {
     showGameBoard();
     showGameInfoPanel();
     setAi();
+    displayStats();
 
     if (engine.firstPlayer.isAi){
         aiMakeMove();
@@ -109,7 +100,7 @@ function setUpDisplayBoard() {
 function cellClicked(event) {
     if (!wasCellClickedByPlayer(event)){
         handleCellClick(this);
-    } else if (wasCellClickedByPlayer(event) && isPlayersTurn()){
+    } else if (wasCellClickedByPlayer(event) && isPlayersTurn() && isBoardInteractable){
         handleCellClick(this);
     }
 }
@@ -131,17 +122,18 @@ function handleCellClick(element) {
         }
         updateBoard();
         displayStats();
-        console.log("is player ai", engine.activePlayer.isAi);
-        console.log("active player", engine.activePlayer);
         if (engine.activePlayer.isAi){
             aiMakeMove();
+        }
+        if (engine.gamePhase === GAME_PHASES.GAME_OVER){
+            setErrorBoxText(`Game over, ${engine.winner.name} WON!`)
         }
     }
 }
 
 function handleDropPhaseCellClick(element){
     try{
-        engine.claimCell(selectedCoordinate);    
+        engine.claimCell(selectedCoordinate);
     } catch (e) {
         console.log(e);
         setErrorBoxText(e.message);
@@ -218,7 +210,6 @@ function aiMakeMove() {
 function aiClickCell(coordinate) {
     let displayCellToClick = getDisplayCell(coordinate);
     let timerHandler = function(){
-        aiClickCounter++;
         displayCellToClick.click();
 
     };
@@ -304,16 +295,43 @@ function clearCellColor(element) {
 function displayStats() {
     displayTokenCount();
     displayWhoseTurnItIs();
-    displayGamePhase()
+    displayGamePhase();
+    displayPlayerNames();
 }
 
 function setErrorBoxText(text){
     document.getElementById("js-error-box").innerText = text;
 }
 
+function clearErrorBoxText() {
+    setErrorBoxText("\n");
+}
+
 function displayTokenCount() {
-    document.getElementById("first-player-token-counter").innerText = engine.firstPlayer.unusedTokenCount;
-    document.getElementById("second-player-token-counter").innerText = engine.secondPlayer.unusedTokenCount;
+    let firstPlayerText;
+    let secondPlayerText;
+    if (engine.gamePhase === GAME_PHASES.DROP_PHASE) {
+        firstPlayerText = `Unplaced tokens for ${engine.firstPlayer.name}: ${engine.firstPlayer.unusedTokenCount}`;
+        secondPlayerText = `Unplaced tokens for ${engine.secondPlayer.name}: ${engine.secondPlayer.unusedTokenCount}`;
+    } else {
+        firstPlayerText = `Tokens left for ${engine.firstPlayer.name}: ${engine.firstPlayer.totalTokenCount}`;
+        secondPlayerText = `Tokens left for ${engine.secondPlayer.name}: ${engine.secondPlayer.totalTokenCount}`;
+
+    }
+    document.getElementById("first-player-token-counter").innerText = firstPlayerText;
+    document.getElementById("second-player-token-counter").innerText = secondPlayerText;
+}
+
+function displayPlayerNames() {
+    let firstPlayerNameInstances = document.querySelectorAll(".first-player-name");
+    let secondPlayerNameInstances = document.querySelectorAll(".second-player-name");
+    let name = engine.firstPlayer.name;
+    let changeNameText = function (element) {
+        element.innerText = name;
+    };
+    firstPlayerNameInstances.forEach(changeNameText);
+    name = engine.secondPlayer.name;
+    secondPlayerNameInstances.forEach(changeNameText);
 }
 
 function displayGamePhase() {
@@ -364,6 +382,8 @@ function hideRules() {
 
 function showTokenAsUnselectable(element) {
 
+    // TODO: make this nice
+
     let blinkCounter = 0;
     let nrOfBlinks = 3;
     element.classList.add("unselectable");
@@ -396,12 +416,4 @@ function showTokenAsPartOfThreeInARow(element) {
         setTimeout(blinkOnceMore, 200)
     };
     setTimeout (blink, 200);
-}
-
-function blinkElementInColor(element, colorClass, blinkTime) {
-    element.classList.add(colorClass);
-    let removeColorClass = function(){
-        element.classList.remove(colorClass)
-    };
-    setTimeout(removeColorClass, blinkTime);
 }

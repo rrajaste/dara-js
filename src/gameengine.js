@@ -68,7 +68,7 @@ export default class GameEngine {
         }
         if (!this.boardScanner.isClaimingCellLegal(coordinates, this.activePlayer)) {
             throw new IllegalCellClaimException(
-                "Cannot claim cell, illegal move"
+                "Cannot drop token here"
             )
         }
         if (this.activePlayer.unusedTokenCount < 1){
