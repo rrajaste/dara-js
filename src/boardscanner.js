@@ -7,8 +7,10 @@ export default class BoardScanner{
         this.traverser = new BoardTraverser(this.gameBoard);
     }
 
-    isMovingTokenLegal(coordinate, direction){
+    isMovingTokenLegal(move){
 
+        let coordinate = move.coordinates;
+        let direction = move.direction;
         let destinationCoordinate = coordinate.addDirection(direction);
         let claimer = this.gameBoard.getCellOwner(coordinate);
 
@@ -40,20 +42,22 @@ export default class BoardScanner{
         return !this.doesClaimingCellCauseNInARow(3, coordinate, claimer);
     }
 
-    doesClaimingCellCauseNInARow(n, cellCoordinate, claimer) {
+    doesClaimingCellCauseNInARow(n, coordinate, claimer) {
 
-        if (! this.gameBoard.isCellEmpty(cellCoordinate)) {
+        if (! this.gameBoard.isCellEmpty(coordinate)) {
 
             throw new Error(); //TODO: dedicated exception
         }
 
-        this.gameBoard.setCellOwner(cellCoordinate, claimer);
+        this.gameBoard.setCellOwner(coordinate, claimer);
 
         let maxMatchesInRow = 0;
         let matchesInRow = 0;
         let board = this.gameBoard;
         let output = function(returnedCoordinates){
-            if (board.getCellOwner(returnedCoordinates) === claimer){
+            let horizontalDistance = coordinate.getHorizontalDistanceFrom(returnedCoordinates);
+            let verticalDistance = coordinate.getVerticalDistanceFrom(returnedCoordinates);
+            if (board.getCellOwner(returnedCoordinates) === claimer && horizontalDistance < 3 && verticalDistance < 3){
                 matchesInRow++;
                 if (matchesInRow > maxMatchesInRow){
                     maxMatchesInRow = matchesInRow;
@@ -62,14 +66,16 @@ export default class BoardScanner{
                 matchesInRow = 0;
             }
         };
-        this.traverser.traverseRow(cellCoordinate.y, output);
+        this.traverser.traverseRow(coordinate.y, output);
         matchesInRow = 0;
-        this.traverser.traverseColumn(cellCoordinate.x, output);
-        this.gameBoard.removeCellOwner(cellCoordinate);
+        this.traverser.traverseColumn(coordinate.x, output);
+        this.gameBoard.removeCellOwner(coordinate);
         return (maxMatchesInRow >= n);
     }
 
-    doesMovingTokenCauseNInARow(n, currentCoordinates, destinationCoordinates){
+    doesMovingTokenCauseNInARow(n, move){
+        let currentCoordinates = move.coordinates;
+        let destinationCoordinates = currentCoordinates.addDirection(move.direction);
         let owner = this.gameBoard.getCellOwner(currentCoordinates);
         this.gameBoard.removeCellOwner(currentCoordinates);
         let causesThreeInARow = this.doesClaimingCellCauseNInARow(n, destinationCoordinates, owner);
