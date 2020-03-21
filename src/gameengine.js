@@ -86,10 +86,12 @@ export default class GameEngine {
         }
     }
 
-    moveToken(coordinates, direction){
+    moveToken(move){
 
         this.resetThreeInARowFlag();
 
+        let coordinates = move.coordinates;
+        let direction = move.direction;
         let destination = coordinates.addDirection(direction);
 
         if (this.gamePhase !== GAME_PHASES.MOVE_PHASE){
@@ -115,12 +117,12 @@ export default class GameEngine {
                 `This cell is empty`)
         }
 
-        if (! this.boardScanner.isMovingTokenLegal(coordinates, direction)){
+        if (! this.boardScanner.isMovingTokenLegal(move)){
             throw new IllegalTokenMoveException(
                 'Cannot move token in given direction');
         }
 
-        if (this.boardScanner.doesMovingTokenCauseNInARow(3, coordinates, destination)) {
+        if (this.boardScanner.doesMovingTokenCauseNInARow(3, move)) {
             this.lastMoveCausedThreeInARow = true;
         }
 
@@ -162,7 +164,6 @@ export default class GameEngine {
         this.coordinatesOfThreeInRows = this.boardScanner
             .getAllCellCoordinatesThatArePartOfThreeInARow(this.activePlayer)
             .concat(this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(this.passivePlayer));
-        console.log("ThreeInRows", this.coordinatesOfThreeInRows)
     };
 
     _checkForVictory() {
