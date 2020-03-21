@@ -22,4 +22,12 @@ export default class Coordinate {
         }
         return false;
     }
+
+    getVerticalDistanceFrom(coordinate){
+        return Math.abs(this.y - coordinate.y)
+    }
+
+    getHorizontalDistanceFrom(coordinate){
+        return Math.abs(this.x  - coordinate.x)
+    }
 }
