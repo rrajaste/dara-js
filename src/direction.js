@@ -44,7 +44,6 @@ export default class Direction{
 
     isOrthogonal(){
         let semanticDirection = this.getSemanticDirection();
-        console.log("dir", this.getSemanticDirection());
         return semanticDirection === SEMANTIC_DIRECTION.NORTH
             || semanticDirection === SEMANTIC_DIRECTION.SOUTH
             || semanticDirection === SEMANTIC_DIRECTION.EAST
