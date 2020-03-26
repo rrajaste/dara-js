@@ -2282,7 +2282,7 @@ $jscomp.polyfill = function (e, r, p, m) {
       _this8.focusedIndex = -1;
       _this8.filterQuery = [];
 
-      // Move dropdown-content after dropdown-trigger
+      // Tokenmove dropdown-content after dropdown-trigger
       if (!!_this8.options.container) {
         $(_this8.options.container).append(_this8.dropdownEl);
       } else {
@@ -7193,7 +7193,7 @@ $jscomp.polyfill = function (e, r, p, m) {
         _this39._animateCaptionIn(el, 0);
       });
 
-      // Move img src into background-image
+      // Tokenmove img src into background-image
       _this39.$slides.find('img').each(function (el) {
         var placeholderBase64 = 'data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
         if ($(el).attr('src') !== placeholderBase64) {
@@ -7489,7 +7489,7 @@ $jscomp.polyfill = function (e, r, p, m) {
       }
 
       /**
-       * Move to next slide
+       * Tokenmove to next slide
        */
 
     }, {
@@ -7504,7 +7504,7 @@ $jscomp.polyfill = function (e, r, p, m) {
       }
 
       /**
-       * Move to previous slide
+       * Tokenmove to previous slide
        */
 
     }, {

@@ -16,6 +16,7 @@
 #gameBoard {
     padding-top: 1em;
     padding-bottom: 1em;
+    margin-bottom: 2em;
 }
 
 @media only screen and (max-width: 1920px) {
@@ -27,4 +28,18 @@
 
 .focused-token{
     border-style: dashed;
+}
+
+.ai-human-switch{
+    padding-top: 2em;
+}
+
+.unselectable{
+    border-style: groove;
+    border-color: red;
+}
+
+.threeInARowElement{
+    border-style: double;
+    border-color: lightblue;
 }
