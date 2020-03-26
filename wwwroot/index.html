@@ -15,7 +15,7 @@
 
 <nav class="light-blue lighten-1" role="navigation">
   <ul id="nav-mobile" class="hide-on-med-and-down">
-    <li><a href="." class="brand-logo center">dara-js</a></li>
+    <li><a href="." class="brand-logo center js-back-to-menu">dara-js</a></li>
   </ul>
 </nav>
 
@@ -35,7 +35,7 @@
     </div>
     <div class="card-action">
       <a href="#" id="toggle-rules">SHOW RULES</a>
-      <a href="." id="back-to-menu">BACK TO MENU</a>
+      <a href="#" class="js-back-to-menu">BACK TO MENU</a>
     </div>
   </div>
 </div>
@@ -71,11 +71,17 @@
     <div class="card-content">
       <h5 class="headers">Settings</h5>
       <div class="row">
-        <div class="input-field col s6" id="first-player-name-input">
+        <div class="input-field col s4" id="first-player-name-input">
           <input placeholder="First Player" id="first-player-name" type="text" class="validate">
-          <label for="first-player-name">First player name:</label>
+          <label for="first-player-name">Green:</label>
         </div>
-        <div class="switch col s6 ai-human-switch" style="padding: 2em">
+        <div class="col s3" style="padding: 1.5em">
+        <label>
+          <input type="checkbox" id="first-player-goes-first" checked="" class="filled-in"/>
+          <span>Goes first?</span>
+        </label>
+      </div>
+        <div class="switch col s4 ai-human-switch" style="padding: 1.5em">
           <label>
             Human
             <input type="checkbox" id="first-player-switch">
@@ -85,11 +91,17 @@
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s6" id="second-player-name-input">
+        <div class="input-field col s4" id="second-player-name-input">
           <input placeholder="Second Player" id="second-player-name" type="text" class="validate">
-          <label for="second-player-name">Second player name:</label>
+          <label for="second-player-name">Blue:</label>
         </div>
-        <div class="switch col s6 ai-human-switch" style="padding: 2em">
+        <div class="col s3" style="padding: 1.5em">
+          <label>
+            <input type="checkbox" id="second-player-goes-first" class="filled-in">
+            <span>Goes first?</span>
+          </label>
+        </div>
+        <div class="switch col s4 ai-human-switch" style="padding: 1.5em">
           <label>
             Human
             <input type="checkbox" id="second-player-switch">
@@ -98,6 +110,7 @@
           </label>
         </div>
       </div>
+      <p id="form-error-box" class="red-text small left-align"></p>
     </div>
     <div class="card-action">
       <button class="btn waves-effect waves-light orange" type="submit" id="new-game-button">START GAME</button>

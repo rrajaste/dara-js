@@ -13,6 +13,8 @@ let toggleRulesButton = document.querySelector('#toggle-rules');
 let firstPlayerGoesFirstCheckBox = document.querySelector("#first-player-goes-first");
 let secondPlayerGoesFirstCheckBox = document.querySelector("#second-player-goes-first");
 let backToMenuButtons = document.querySelectorAll(".js-back-to-menu");
+let firstPlayerNameField = document.querySelector('#first-player-name');
+let secondPlayerNameField = document.querySelector('#second-player-name');
 let firstPlayerColor = "green";
 let secondPlayerColor = "blue";
 let emptyCellColor = "brown";
@@ -78,6 +80,18 @@ function handleRulesToggle() {
 }
 
 function startNewGame() {
+    if (areSettingsValid()){
+        beginGame();
+    } else {
+        setFormErrorMessage("Please pick different names for players");
+    }
+}
+
+function areSettingsValid() {
+    return firstPlayerNameField.value !== secondPlayerNameField.value;
+}
+
+function beginGame() {
     setUpDisplayBoard();
     hideSettingsPanel();
     hideRules();
@@ -88,7 +102,6 @@ function startNewGame() {
     setAi();
     displayStats();
     engine.startGame();
-
     if (engine.activePlayer.isAi){
         aiMakeMove();
     }
@@ -101,8 +114,8 @@ function setWhoGoesFirst(){
 }
 
 function setPlayerNames() {
-    let firstPlayerName = document.querySelector('#first-player-name').value;
-    let secondPlayerName = document.querySelector('#second-player-name').value;
+    let firstPlayerName = firstPlayerNameField.value;
+    let secondPlayerName = secondPlayerNameField.value;
     if (firstPlayerName !== ""){
         engine.firstPlayer.name = firstPlayerName;
     }
@@ -414,6 +427,10 @@ function hideRules() {
     document.querySelector("#rules-panel").style.display = 'none';
     showGameBoard();
     toggleRulesButton.innerText = "SHOW RULES"
+}
+
+function setFormErrorMessage(message) {
+    document.getElementById("form-error-box").innerText = message;
 }
 
 function showTokenAsUnselectable(element) {

@@ -19,19 +19,15 @@
     margin-bottom: 2em;
 }
 
-@media only screen and (max-width: 1920px) {
 .board-container {
 
     max-width: 40%;
-    }
+
 }
+
 
 .focused-token{
     border-style: dashed;
-}
-
-.ai-human-switch{
-    padding-top: 2em;
 }
 
 .unselectable{
