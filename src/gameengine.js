@@ -90,7 +90,7 @@ export default class GameEngine {
 
         this.resetThreeInARowFlag();
 
-        let coordinates = move.coordinates;
+        let coordinates = move.coordinate;
         let direction = move.direction;
         let destination = coordinates.addDirection(direction);
 
@@ -129,6 +129,7 @@ export default class GameEngine {
         this.board.removeCellOwner(coordinates);
         this.board.setCellOwner(destination, this.activePlayer);
         this._updateCoordinatesOfThreeInRows();
+        this._checkForDraw();
 
         if (this.lastMoveCausedThreeInARow === false){
             this.changeWhoseTurnItIs();
@@ -157,6 +158,7 @@ export default class GameEngine {
 
         this._updateCoordinatesOfThreeInRows();
         this._checkForVictory();
+        this._checkForDraw();
         this.changeWhoseTurnItIs();
     }
 
@@ -168,7 +170,7 @@ export default class GameEngine {
 
     _checkForVictory() {
         if (this.passivePlayer.totalTokenCount <= 2){
-            this.gamePhase = GAME_PHASES.GAME_OVER;
+            this._declareVictory();
         }
     }
 
@@ -188,8 +190,33 @@ export default class GameEngine {
         this.passivePlayer = tmp;
     }
 
-    get winner(){
-        return this.activePlayer;
+    _checkForDraw() {
+        if (!(this._canRemoveTokenFrom(this.passivePlayer) && this._playerHasMovesLeft(this.passivePlayer))){
+            this._declareDraw();
+        }
+    }
+
+
+    _canRemoveTokenFrom(player) {
+        return (this.boardScanner.getCoordinatesForAllPossibleTokensToRemoveFrom(player).length !== 0);
+    }
+
+    _playerHasMovesLeft(player) {
+        return (this.boardScanner.getAllPossibleMovesFor(player).length !== 0);
+    }
+
+    _declareVictory() {
+        this.gamePhase = GAME_PHASES.GAME_OVER;
+        this._winner = this.activePlayer;
+    }
+
+    _declareDraw() {
+        this.gamePhase = GAME_PHASES.GAME_OVER;
+        this._winner = undefined;
+    }
+
+    get winner() {
+        return this._winner;
     }
 }
 

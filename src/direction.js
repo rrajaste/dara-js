@@ -1,5 +1,4 @@
 import {SEMANTIC_DIRECTION} from "./semanticdirection.js";
-import Coordinate from "./coordinate";
 
 export default class Direction{
     constructor(x, y) {

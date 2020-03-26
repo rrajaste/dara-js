@@ -5,8 +5,6 @@ import Coordinate from "./coordinate.js";
 import AI from "./ai.js";
 import TokenMove from "./tokenMove.js";
 
-// TODO: add return to menu button
-
 let engine = new GameEngine();
 let displayBoard = document.querySelector('#gameBoard');
 let displayBoardRows = displayBoard.querySelectorAll('.js-board-row');
@@ -21,9 +19,9 @@ let focusedCell;
 let selectedCoordinate;
 let movePhaseAction;
 let displayCells = [];
-let isBoardInteractable = true;
+let isBoardInteractive = true;
 let Ai;
-let aiThinkTime = 500;
+let aiThinkTime = 100;
 
 engine.firstPlayer.name = "First player";
 engine.secondPlayer.name = "Second player";
@@ -71,10 +69,10 @@ function startNewGame() {
 function setPlayerNames() {
     let firstPlayerName = document.querySelector('#first-player-name').value;
     let secondPlayerName = document.querySelector('#second-player-name').value;
-    if (firstPlayerName !== undefined){
+    if (firstPlayerName !== ""){
         engine.firstPlayer.name = firstPlayerName;
     }
-    if (secondPlayerName !== undefined){
+    if (secondPlayerName !== ""){
         engine.secondPlayer.name = secondPlayerName;
     }
 }
@@ -100,7 +98,7 @@ function setUpDisplayBoard() {
 function cellClicked(event) {
     if (!wasCellClickedByPlayer(event)){
         handleCellClick(this);
-    } else if (wasCellClickedByPlayer(event) && isPlayersTurn() && isBoardInteractable){
+    } else if (wasCellClickedByPlayer(event) && isPlayersTurn() && isBoardInteractive){
         handleCellClick(this);
     }
 }
@@ -111,7 +109,7 @@ function isPlayersTurn() {
 
 function handleCellClick(element) {
     setErrorBoxText("\n");
-    if (isBoardInteractable){
+    if (isBoardInteractive){
         let row = Number (element.dataset.row);
         let column = Number (element.dataset.col);
         selectedCoordinate = new Coordinate(column, row);
@@ -126,7 +124,11 @@ function handleCellClick(element) {
             aiMakeMove();
         }
         if (engine.gamePhase === GAME_PHASES.GAME_OVER){
-            setErrorBoxText(`Game over, ${engine.winner.name} WON!`)
+            if (engine.winner !== undefined){
+                setErrorBoxText(`Game over, ${engine.winner.name} WON!`);
+            } else {
+                setErrorBoxText("No possible moves left, it's a draw");
+            }
         }
     }
 }

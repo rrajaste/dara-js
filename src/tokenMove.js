@@ -1,6 +1,6 @@
 export default class TokenMove {
     constructor(coordinates, direction) {
-        this.coordinates = coordinates;
+        this.coordinate = coordinates;
         this.direction = direction;
     }
 }

@@ -1,109 +1,68 @@
-import BoardTraverser from "./boardTraverser.js";
-import BoardScanner from "./boardscanner.js";
-import Direction from "./direction.js";
-import TokenMove from "./tokenMove";
+import BoardScanner from "./boardscanner";
 
 export default class AI{
+
     constructor(gameBoard) {
-        this.gameBoard = gameBoard;
-        this.boardTraverser = new BoardTraverser(this.gameBoard);
-        this.boardScanner = new BoardScanner(this.gameBoard);
+        this.boardScanner = new BoardScanner(gameBoard);
     }
 
-    getTokenDropCoordinatesFor(player){
+    getTokenDropCoordinatesFor(player) {
         return this._getRandomAvailableCellCoordinatesFor(player);
     }
 
-    getDestinationCellCoordinatesFor(player){
-        return this.initiatedMove.coordinates.addDirection(this.initiatedMove.direction);
-    }
-
-    getTokenToMoveCoordinatesFor(player){
-        let move;
-        this._findPossibleMovesForPlayer(player);
-        if (this.allPreferredMoves.length !== 0){
-            move = this._getRandomElementFromArray(this.allPreferredMoves);
-        } else {
-            move = this._getRandomElementFromArray(this.allLegalMoves);
+    getDestinationCellCoordinatesFor(player) {
+        if (this.lastChosenMove === undefined){
+            throw new Error(
+                `Cannot get destination cell coordinates for player ${player.name} - 
+                    player did not perform previous cell selection`);
         }
-        this.initiatedMove = move;
-        console.log("initiated move", this.initiatedMove);
-        return move.coordinates;
+        else {
+            let coordinate = this.lastChosenMove.coordinate.addDirection(this.lastChosenMove.direction);
+            this.lastChosenMove = undefined;
+            return coordinate;
+        }
     }
 
-    getCoordinatesToRemoveTokenFrom(player){
+    getTokenToMoveCoordinatesFor(player) {
+        let move;
+        let allPossibleMoves = this.boardScanner.getAllPossibleMovesFor(player);
+        let preferredMoves = this._getPreferredMovesFromArray(allPossibleMoves);
+        if (preferredMoves.length !== 0){
+            move = AI._getElementFromArray(preferredMoves);
+        } else {
+            move = AI._getElementFromArray(allPossibleMoves);
+        }
+        this.lastChosenMove = move;
+        return move.coordinate;
+    }
+
+    getCoordinatesToRemoveTokenFrom(player) {
         return this._getCoordinatesForRandomTokenToRemoveFrom(player);
     }
 
+    _getPreferredMovesFromArray(allMoves){
+        let preferredMoves = [];
+        let boardScanner = this.boardScanner;
+        let checkMove = function(move){
+            if (boardScanner.doesMovingTokenCauseNInARow(3, move)){
+                preferredMoves.push(move);
+            }
+        };
+        allMoves.forEach(checkMove);
+        return preferredMoves;
+    }
+
     _getCoordinatesForRandomTokenToRemoveFrom(player){
-        let cells = this._getCoordinatesForAllPossibleTokensToRemoveFrom(player);
-        return this._getRandomElementFromArray(cells);
+        let cells = this.boardScanner.getCoordinatesForAllPossibleTokensToRemoveFrom(player);
+        return AI._getElementFromArray(cells);
     }
 
-    _getCoordinatesForAllPossibleTokensToRemoveFrom(player){
-        let availableCoordinates = [];
-        let cellsPartOfThreeInRows = this.boardScanner.getAllCellCoordinatesThatArePartOfThreeInARow(player);
-        let board = this.gameBoard;
-        let validateCell = function (coordinate) {
-            if (board.getCellOwner(coordinate) === player && !coordinate.isInArray(cellsPartOfThreeInRows)){
-                availableCoordinates.push(coordinate);
-            }
-        };
-        for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
-            this.boardTraverser.traverseRow(i, validateCell)
-        }
-        return availableCoordinates;
+    _getRandomAvailableCellCoordinatesFor(player) {
+        let cells = this.boardScanner.getCoordinatesToAllAvailableCellsFor(player);
+        return AI._getElementFromArray(cells);
     }
 
-    _findPossibleMovesForPlayer(player){
-        let allLegalMoves = [];
-        let allPreferredMoves = [];
-        let directions = Direction.getAllOrthogonalDirections();
-        let boardScanner = this.boardScanner;
-        let board = this.gameBoard;
-        let validateCell = function (returnedCoordinate) {
-            if (board.getCellOwner(returnedCoordinate) === player){
-                for (let i = 0; i < directions.length; i++) {
-                    let direction = directions[i];
-                    let move = new TokenMove(returnedCoordinate, direction);
-                    if (boardScanner.isMovingTokenLegal(move)){
-                        if (boardScanner.doesMovingTokenCauseNInARow(3, move)){
-                            allPreferredMoves.push(move);
-                        } else {
-                            allLegalMoves.push(move);
-                        }
-                    }
-                }
-
-            }
-        };
-        for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
-            this.boardTraverser.traverseRow(i, validateCell)
-        }
-        this.allLegalMoves = allLegalMoves;
-        this.allPreferredMoves = allPreferredMoves;
-    }
-
-    _getRandomAvailableCellCoordinatesFor(player){
-        let cells = this._getCoordinatesToAllAvailableCellsFor(player);
-        return this._getRandomElementFromArray(cells);
-    }
-
-    _getCoordinatesToAllAvailableCellsFor(player){
-        let availableCoordinates = [];
-        let boardScanner = this.boardScanner;
-        let validateCell = function (coordinate) {
-            if (boardScanner.isClaimingCellLegal(coordinate, player)){
-                availableCoordinates.push(coordinate);
-            }
-        };
-        for (let i = 0; i < this.gameBoard.numberOfRows; i++) {
-            this.boardTraverser.traverseRow(i, validateCell)
-        }
-        return availableCoordinates;
-    }
-
-    _getRandomElementFromArray(array){
+    static _getElementFromArray(array){
         return array[Math.floor(Math.random() * array.length)];
     }
 }
