@@ -136,6 +136,13 @@ export default class GameEngine {
         }
     };
 
+    invertPlayerStartingOrder(){
+        if (this.gamePhase !== GAME_PHASES.NOT_STARTED){
+            throw new IllegalGamePhaseException("Cannot invert starting order, game is already started");
+        }
+        this.changeWhoseTurnItIs();
+    }
+
     resetThreeInARowFlag(){
         this.lastMoveCausedThreeInARow = false;
     }
@@ -191,7 +198,8 @@ export default class GameEngine {
     }
 
     _checkForDraw() {
-        if (!(this._canRemoveTokenFrom(this.passivePlayer) && this._playerHasMovesLeft(this.passivePlayer))){
+        if ((this.lastMoveCausedThreeInARow && !(this._canRemoveTokenFrom(this.passivePlayer))
+            || !this._playerHasMovesLeft(this.passivePlayer))){
             this._declareDraw();
         }
     }

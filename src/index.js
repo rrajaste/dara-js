@@ -10,6 +10,8 @@ let displayBoard = document.querySelector('#gameBoard');
 let displayBoardRows = displayBoard.querySelectorAll('.js-board-row');
 let newGameButton  = document.querySelector('#new-game-button');
 let toggleRulesButton = document.querySelector('#toggle-rules');
+let firstPlayerGoesFirstCheckBox = document.querySelector("#first-player-goes-first");
+let secondPlayerGoesFirstCheckBox = document.querySelector("#second-player-goes-first");
 let firstPlayerColor = "green";
 let secondPlayerColor = "blue";
 let emptyCellColor = "brown";
@@ -21,7 +23,10 @@ let movePhaseAction;
 let displayCells = [];
 let isBoardInteractive = true;
 let Ai;
-let aiThinkTime = 100;
+let aiThinkTime = 10;
+
+firstPlayerGoesFirstCheckBox.onclick = handleWhoGoesFirstSelection;
+secondPlayerGoesFirstCheckBox.onclick = handleWhoGoesFirstSelection;
 
 engine.firstPlayer.name = "First player";
 engine.secondPlayer.name = "Second player";
@@ -42,6 +47,23 @@ const ACTIONS = {
 
 movePhaseAction = ACTIONS.SELECT_CELL;
 
+function handleWhoGoesFirstSelection() {
+    if (this === firstPlayerGoesFirstCheckBox){
+        if (secondPlayerGoesFirstCheckBox.checked){
+            secondPlayerGoesFirstCheckBox.checked = false;
+        } if (this.checked === false){
+            secondPlayerGoesFirstCheckBox.checked = true;
+        }
+    }
+    if (this === secondPlayerGoesFirstCheckBox){
+        if (firstPlayerGoesFirstCheckBox.checked){
+            firstPlayerGoesFirstCheckBox.checked = false;
+        } if (this.checked === false){
+            firstPlayerGoesFirstCheckBox.checked = true;
+        }
+    }
+}
+
 function handleRulesToggle() {
     if (areRulesVisible){
         hideRules();
@@ -51,18 +73,25 @@ function handleRulesToggle() {
 }
 
 function startNewGame() {
-    setPlayerNames();
     setUpDisplayBoard();
-    engine.startGame();
     hideSettingsPanel();
     hideRules();
     showGameBoard();
     showGameInfoPanel();
+    setWhoGoesFirst();
+    setPlayerNames();
     setAi();
     displayStats();
+    engine.startGame();
 
-    if (engine.firstPlayer.isAi){
+    if (engine.activePlayer.isAi){
         aiMakeMove();
+    }
+}
+
+function setWhoGoesFirst(){
+    if (secondPlayerGoesFirstCheckBox.checked){
+        engine.invertPlayerStartingOrder();
     }
 }
 
