@@ -13,242 +13,243 @@
 </head>
 <body>
 
-  <nav class="light-blue lighten-1" role="navigation">
-    <ul id="nav-mobile" class="hide-on-med-and-down">
-      <li><a href="#" class="brand-logo center">dara-js</a></li>
-    </ul>
-  </nav>
+<nav class="light-blue lighten-1" role="navigation">
+  <ul id="nav-mobile" class="hide-on-med-and-down">
+    <li><a href="." class="brand-logo center">dara-js</a></li>
+  </ul>
+</nav>
 
-  <div class="section no-pad-bot" id="index-banner">
-  </div>
+<div class="section no-pad-bot" id="index-banner">
+</div>
 
-  <!-- Game info header -->
+<!-- Game info header -->
 
-  <div class="container board-container" id="game-info-panel" style="display: none">
-    <div class="card center">
-      <div class="card-content">
-        <h5 class="headers">Score</h5>
-        <p>Whose turn: <span id="whose-turn"></span></p>
-        <p id="first-player-token-counter"></p>
-        <p id="second-player-token-counter"></p>
-        <p>Game phase: <span id="game-phase"></span></p>
-      </div>
-      <div class="card-action">
-        <a href="#" id="toggle-rules">SHOW RULES</a>
-      </div>
+<div class="container board-container" id="game-info-panel" style="display: none">
+  <div class="card center">
+    <div class="card-content">
+      <h5 class="headers">Score</h5>
+      <p>Whose turn: <span id="whose-turn"></span></p>
+      <p id="first-player-token-counter"></p>
+      <p id="second-player-token-counter"></p>
+      <p>Game phase: <span id="game-phase"></span></p>
+    </div>
+    <div class="card-action">
+      <a href="#" id="toggle-rules">SHOW RULES</a>
+      <a href="." id="back-to-menu">BACK TO MENU</a>
     </div>
   </div>
+</div>
 
-  <!-- Game rules panel -->
-  <div class="container board-container" id="rules-panel">
-    <div class="card center">
-      <div class="card-content">
-        <h5 class="headers">Game rules</h5>
-        <h6><b>What is Dara?</b></h6>
-        <p>Dara is a two-player strategy board game played in several countries of West Africa</p>
-        <h6><b>How to play</b></h6>
-        <ul class="light">
-          <li>In the beginning of the game, the board is empty</li>
-          <li>Players take turns placing their tokens in the empty cells</li>
-          <li>Be careful, you cannot make a three-in-a-row yet</li>
-          <li>Once both players have placed their 12 tokens, the move phase begins</li>
-          <li>In the move phase your mission is to get 3 of your tokens in a row</li>
-          <li>Diagonals do not count</li>
-          <li>You cannot make more than three-in-a-row (4 or 5 are not allowed)</li>
-          <li>Once you get a three-in-a-row you may remove one of your opponents tokens</li>
-          <li>Whoever cannot make a three-in-a-row anymore i.e has only 2 tokens left, loses</li>
-        </ul>
-        <h6><b>Good luck and play fair!</b></h6>
-      </div>
+<!-- Game rules panel -->
+<div class="container board-container" id="rules-panel">
+  <div class="card center">
+    <div class="card-content">
+      <h5 class="headers">Game rules</h5>
+      <h6><b>What is Dara?</b></h6>
+      <p>Dara is a two-player strategy board game played in several countries of West Africa</p>
+      <h6><b>How to play</b></h6>
+      <ul class="light">
+        <li>In the beginning of the game, the board is empty</li>
+        <li>Players take turns placing their tokens in the empty cells</li>
+        <li>Be careful, you cannot make a three-in-a-row yet</li>
+        <li>Once both players have placed their 12 tokens, the move phase begins</li>
+        <li>In the move phase your mission is to get 3 of your tokens in a row</li>
+        <li>Diagonals do not count</li>
+        <li>You cannot make more than three-in-a-row (4 or 5 are not allowed)</li>
+        <li>Once you get a three-in-a-row you may remove one of your opponents tokens</li>
+        <li>Whoever cannot make a three-in-a-row anymore i.e has only 2 tokens left, loses</li>
+      </ul>
+      <h6><b>Good luck and play fair!</b></h6>
     </div>
   </div>
+</div>
 
-  <!-- Settings panel --->
+<!-- Settings panel --->
 
-  <div class="container board-container" id="settings-panel">
-    <div class="card center">
-      <div class="card-content">
-        <h5 class="headers">Settings</h5>
-        <div class="row">
-          <div class="input-field col s6" id="first-player-name-input">
-            <input placeholder="First Player" id="first-player-name" type="text" class="validate">
-            <label for="first-player-name">First player name:</label>
-          </div>
-          <div class="switch col s6 ai-human-switch">
-            <label>
-              Human
-              <input type="checkbox" id="first-player-switch">
-              <span class="lever"></span>
-              Computer
-            </label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6" id="second-player-name-input">
-            <input placeholder="Second Player" id="second-player-name" type="text" class="validate">
-            <label for="second-player-name">Second player name:</label>
-          </div>
-          <div class="switch col s6 ai-human-switch">
-            <label>
-              Human
-              <input type="checkbox" id="second-player-switch">
-              <span class="lever"></span>
-              Computer
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="card-action">
-        <button class="btn waves-effect waves-light orange" type="submit" id="new-game-button">START GAME</button>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <h5 class="center materialize-red-text" id="js-error-box"></h5>
-  </div>
-
-  <!-- Game board -->
-
-  <div class="container brown center board-container" id="gameBoard" style="display: none">
-
-      <!-- First row   -->
-    <div class="row js-board-row">
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="0" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="1" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="2" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="3" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="4" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="5" data-player="0"></a>
-      </div>
-    </div>
-
-
-    <!--  Second row   -->
-
-    <div class="row js-board-row">
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="0" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="1" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="2" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="3" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="4" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="5" data-player="0"></a>
-      </div>
-    </div>
-
-    <!--  Third row   -->
-
-    <div class="row js-board-row">
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="0" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="1" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="2" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="3" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="4" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="5" data-player="0"></a>
-      </div>
-    </div>
-
-    <!--  Fourth row   -->
-
-    <div class="row js-board-row">
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="0" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="1" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="2" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="3" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="4" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="5" data-player="0"></a>
-      </div>
-    </div>
-
-    <!--  Fifth row   -->
-
-    <div class="row js-board-row">
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="0" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="1" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="2" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="3" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="4" data-player="0"></a>
-      </div>
-      <div class="col s2">
-        <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="5" data-player="0"></a>
-      </div>
-    </div>
-
-
-  </div>
-
-  <footer class="page-footer orange">
-    <div class="container">
+<div class="container board-container" id="settings-panel">
+  <div class="card center">
+    <div class="card-content">
+      <h5 class="headers">Settings</h5>
       <div class="row">
-
+        <div class="input-field col s6" id="first-player-name-input">
+          <input placeholder="First Player" id="first-player-name" type="text" class="validate">
+          <label for="first-player-name">First player name:</label>
+        </div>
+        <div class="switch col s6 ai-human-switch" style="padding: 2em">
+          <label>
+            Human
+            <input type="checkbox" id="first-player-switch">
+            <span class="lever"></span>
+            Computer
+          </label>
+        </div>
       </div>
+      <div class="row">
+        <div class="input-field col s6" id="second-player-name-input">
+          <input placeholder="Second Player" id="second-player-name" type="text" class="validate">
+          <label for="second-player-name">Second player name:</label>
+        </div>
+        <div class="switch col s6 ai-human-switch" style="padding: 2em">
+          <label>
+            Human
+            <input type="checkbox" id="second-player-switch">
+            <span class="lever"></span>
+            Computer
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card-action">
+      <button class="btn waves-effect waves-light orange" type="submit" id="new-game-button">START GAME</button>
+    </div>
+  </div>
+</div>
+
+<div>
+  <h5 class="center materialize-red-text" id="js-error-box"></h5>
+</div>
+
+<!-- Game board -->
+
+<div class="container brown center board-container" id="gameBoard" style="display: none">
+
+  <!-- First row   -->
+  <div class="row js-board-row">
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="0" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="1" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="2" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="3" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="4" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="0" data-col="5" data-player="0"></a>
+    </div>
+  </div>
+
+
+  <!--  Second row   -->
+
+  <div class="row js-board-row">
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="0" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="1" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="2" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="3" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="4" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="1" data-col="5" data-player="0"></a>
+    </div>
+  </div>
+
+  <!--  Third row   -->
+
+  <div class="row js-board-row">
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="0" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="1" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="2" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="3" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="4" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="2" data-col="5" data-player="0"></a>
+    </div>
+  </div>
+
+  <!--  Fourth row   -->
+
+  <div class="row js-board-row">
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="0" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="1" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="2" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="3" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="4" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="3" data-col="5" data-player="0"></a>
+    </div>
+  </div>
+
+  <!--  Fifth row   -->
+
+  <div class="row js-board-row">
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="0" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="1" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="2" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="3" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="4" data-player="0"></a>
+    </div>
+    <div class="col s2">
+      <a class=" btn-large  waves-light brown js-cell" data-row="4" data-col="5" data-player="0"></a>
+    </div>
+  </div>
+
+
+</div>
+
+<footer class="page-footer orange">
+  <div class="container">
+    <div class="row">
 
     </div>
-    <div class="footer-copyright">
-      <div class="container">
+
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
       Made by <a class="orange-text text-lighten-3" href="http://rajaste.ee">Ranno Rajaste</a>
-      </div>
     </div>
-  </footer>
+  </div>
+</footer>
 
 
-  <!--  Scripts-->
-  <script src="main.js"></script>
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="js/materialize.js"></script>
-  <script src="js/materialize.js"></script>
-  </body>
+<!--  Scripts-->
+<script src="main.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="js/materialize.js"></script>
+<script src="js/materialize.js"></script>
+</body>
 </html>
