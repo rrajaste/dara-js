@@ -12,6 +12,7 @@ let newGameButton  = document.querySelector('#new-game-button');
 let toggleRulesButton = document.querySelector('#toggle-rules');
 let firstPlayerGoesFirstCheckBox = document.querySelector("#first-player-goes-first");
 let secondPlayerGoesFirstCheckBox = document.querySelector("#second-player-goes-first");
+let backToMenuButtons = document.querySelectorAll(".js-back-to-menu");
 let firstPlayerColor = "green";
 let secondPlayerColor = "blue";
 let emptyCellColor = "brown";
@@ -23,7 +24,7 @@ let movePhaseAction;
 let displayCells = [];
 let isBoardInteractive = true;
 let Ai;
-let aiThinkTime = 10;
+let aiThinkTime = 1000;
 
 firstPlayerGoesFirstCheckBox.onclick = handleWhoGoesFirstSelection;
 secondPlayerGoesFirstCheckBox.onclick = handleWhoGoesFirstSelection;
@@ -33,6 +34,10 @@ engine.secondPlayer.name = "Second player";
 
 newGameButton.onclick = startNewGame;
 toggleRulesButton.onclick = handleRulesToggle;
+
+for (const button of backToMenuButtons){
+    button.onclick = ()=> window.location.reload();
+}
 
 displayStats();
 setErrorBoxText("\n");
