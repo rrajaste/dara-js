@@ -2,7 +2,7 @@
 
 Dara-js is a simple single page vanilla javascript web game based on the African board game [Dara](https://en.wikipedia.org/wiki/Dara_(game)).
 
-Current up-to-date build of the game is live at rajaste.ee
+Current up-to-date build of the game is live at [rajaste.ee](https://rajaste.ee/)
 
 ## Setting things up
 
